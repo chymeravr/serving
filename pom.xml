@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.chymeravr</groupId>
+    <artifactId>serving</artifactId>
+<<<<<<< HEAD
+    <version>1.37-SNAPSHOT</version>
+=======
+    <version>1.36</version>
+>>>>>>> release/1.36
+    <packaging>pom</packaging>
+    <name>serving</name>
+
+    <properties>
+        <jettyVersion>9.4.0.v20161208</jettyVersion>
+    </properties>
+
+    <scm>
+
+        <developerConnection>scm:git:git@bitbucket.org:rubbal/adserver.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>Nexus Staging Repo</name>
+            <url>http://localhost:8081/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Nexus Staging Repo</name>
+            <url>http://localhost:8081/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <modules>
+        <module>server</module>
+        <module>thrift</module>
+        <module>war</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <!--plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.1</version>
+            </plugin-->
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                    <!-- Enable this to push to origin using SSH keys -->
+                    <enableSshAgent>true</enableSshAgent>
+                    <!-- Keep your maven submodules at the same version as the parent POM -->
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <squash>true</squash>
+                    <flowInitContext>
+                        <!--
+                          You can customize your development branch name. Why? Because it's faster to type
+                          'git push origin dvlp'
+                          than
+                          'git push origin develop'
+                          ;-)
+                        -->
+                        <developBranchName>develop</developBranchName>
+                        <!-- You can also customize your tag prefixes -->
+                    </flowInitContext>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
