@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.chymeravr</groupId>
     <artifactId>serving</artifactId>
-    <version>0.4</version>
+    <version>0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>serving</name>
 
@@ -14,7 +14,7 @@
     <scm>
 
         <developerConnection>scm:git:git@bitbucket.org:rubbal/adserver.git</developerConnection>
-        <tag>serving-0.4</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
