@@ -38,34 +38,34 @@
 
     <build>
         <plugins>
-            <!--plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.1</version>
-            </plugin-->
-            <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m5.1</version>
-                <configuration>
-                    <!-- Enable this to push to origin using SSH keys -->
-                    <enableSshAgent>true</enableSshAgent>
-                    <!-- Keep your maven submodules at the same version as the parent POM -->
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <squash>true</squash>
-                    <flowInitContext>
-                        <!--
-                          You can customize your development branch name. Why? Because it's faster to type
-                          'git push origin dvlp'
-                          than
-                          'git push origin develop'
-                          ;-)
-                        -->
-                        <developBranchName>develop</developBranchName>
-                        <!-- You can also customize your tag prefixes -->
-                    </flowInitContext>
-                </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>external.atlassian.jgitflow</groupId>-->
+                <!--<artifactId>jgitflow-maven-plugin</artifactId>-->
+                <!--<version>1.0-m5.1</version>-->
+                <!--<configuration>-->
+                    <!--&lt;!&ndash; Enable this to push to origin using SSH keys &ndash;&gt;-->
+                    <!--<enableSshAgent>true</enableSshAgent>-->
+                    <!--&lt;!&ndash; Keep your maven submodules at the same version as the parent POM &ndash;&gt;-->
+                    <!--<autoVersionSubmodules>true</autoVersionSubmodules>-->
+                    <!--<squash>true</squash>-->
+                    <!--<flowInitContext>-->
+                        <!--&lt;!&ndash;-->
+                          <!--You can customize your development branch name. Why? Because it's faster to type-->
+                          <!--'git push origin dvlp'-->
+                          <!--than-->
+                          <!--'git push origin develop'-->
+                          <!--;-)-->
+                        <!--&ndash;&gt;-->
+                        <!--<developBranchName>develop</developBranchName>-->
+                        <!--&lt;!&ndash; You can also customize your tag prefixes &ndash;&gt;-->
+                    <!--</flowInitContext>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
