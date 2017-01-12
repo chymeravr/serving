@@ -4,11 +4,11 @@
     <parent>
         <groupId>com.chymeravr</groupId>
         <artifactId>serving</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.3-SNAPSHOT</version>
     </parent>
     <artifactId>server</artifactId>
     <name>server</name>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
     <url>http://maven.apache.org</url>
     <packaging>jar</packaging>
     <properties>
