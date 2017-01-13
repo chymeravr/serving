@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.chymeravr</groupId>
     <artifactId>serving</artifactId>
@@ -34,7 +35,22 @@
         <module>server</module>
         <module>thrift</module>
         <module>war</module>
+        <module>database</module>
+        <module>cache</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok-maven</artifactId>
+            <version>1.16.12.0</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -44,27 +60,27 @@
                 <version>2.5.1</version>
             </plugin>
             <!--<plugin>-->
-                <!--<groupId>external.atlassian.jgitflow</groupId>-->
-                <!--<artifactId>jgitflow-maven-plugin</artifactId>-->
-                <!--<version>1.0-m5.1</version>-->
-                <!--<configuration>-->
-                    <!--&lt;!&ndash; Enable this to push to origin using SSH keys &ndash;&gt;-->
-                    <!--<enableSshAgent>true</enableSshAgent>-->
-                    <!--&lt;!&ndash; Keep your maven submodules at the same version as the parent POM &ndash;&gt;-->
-                    <!--<autoVersionSubmodules>true</autoVersionSubmodules>-->
-                    <!--<squash>true</squash>-->
-                    <!--<flowInitContext>-->
-                        <!--&lt;!&ndash;-->
-                          <!--You can customize your development branch name. Why? Because it's faster to type-->
-                          <!--'git push origin dvlp'-->
-                          <!--than-->
-                          <!--'git push origin develop'-->
-                          <!--;-)-->
-                        <!--&ndash;&gt;-->
-                        <!--<developBranchName>develop</developBranchName>-->
-                        <!--&lt;!&ndash; You can also customize your tag prefixes &ndash;&gt;-->
-                    <!--</flowInitContext>-->
-                <!--</configuration>-->
+            <!--<groupId>external.atlassian.jgitflow</groupId>-->
+            <!--<artifactId>jgitflow-maven-plugin</artifactId>-->
+            <!--<version>1.0-m5.1</version>-->
+            <!--<configuration>-->
+            <!--&lt;!&ndash; Enable this to push to origin using SSH keys &ndash;&gt;-->
+            <!--<enableSshAgent>true</enableSshAgent>-->
+            <!--&lt;!&ndash; Keep your maven submodules at the same version as the parent POM &ndash;&gt;-->
+            <!--<autoVersionSubmodules>true</autoVersionSubmodules>-->
+            <!--<squash>true</squash>-->
+            <!--<flowInitContext>-->
+            <!--&lt;!&ndash;-->
+            <!--You can customize your development branch name. Why? Because it's faster to type-->
+            <!--'git push origin dvlp'-->
+            <!--than-->
+            <!--'git push origin develop'-->
+            <!--;-)-->
+            <!--&ndash;&gt;-->
+            <!--<developBranchName>develop</developBranchName>-->
+            <!--&lt;!&ndash; You can also customize your tag prefixes &ndash;&gt;-->
+            <!--</flowInitContext>-->
+            <!--</configuration>-->
             <!--</plugin>-->
         </plugins>
     </build>
