@@ -10,6 +10,7 @@
 
     <properties>
         <jettyVersion>9.4.0.v20161208</jettyVersion>
+        <metrics.version>3.1.0</metrics.version>
     </properties>
 
     <scm>
@@ -50,6 +51,11 @@
             <artifactId>lombok</artifactId>
             <version>1.16.12</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${metrics.version}</version>
         </dependency>
     </dependencies>
 
