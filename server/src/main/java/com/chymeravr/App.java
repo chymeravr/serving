@@ -49,13 +49,11 @@ public class App {
         server.setHandler(contexts);
         Injector injector = Guice.createInjector(new CacheModule(this.configFilePath));
 
-    /*
-     * Now that we've got the injector, we can build objects.
-     */
+
         PlacementCache placementCache = injector.getInstance(PlacementCache.class);
         AdgroupCache adgroupCache = injector.getInstance(AdgroupCache.class);
 
-        
+
         server.start();
         server.join();
     }
