@@ -1,5 +1,7 @@
-package com.chymeravr;
+package com.chymeravr.rqhandler;
 
+import com.chymeravr.adgroup.AdgroupCache;
+import com.chymeravr.placement.PlacementCache;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -10,21 +12,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class RequestHandler extends AbstractHandler {
-    final String greeting;
-    final String body;
 
-    public RequestHandler() {
-        this("Hello World");
+    private final AdgroupCache adgroupCache;
+    private final PlacementCache placementCache;
+
+    public RequestHandler(AdgroupCache adgroupCache, PlacementCache placementCache) {
+        this.adgroupCache = adgroupCache;
+        this.placementCache = placementCache;
     }
 
-    public RequestHandler(String greeting) {
-        this(greeting, null);
-    }
-
-    public RequestHandler(String greeting, String body) {
-        this.greeting = greeting;
-        this.body = body;
-    }
 
     public void handle(String target,
                        Request baseRequest,
@@ -35,12 +31,8 @@ public class RequestHandler extends AbstractHandler {
         response.setStatus(HttpServletResponse.SC_OK);
 
         PrintWriter out = response.getWriter();
-
-        out.println("<h1>" + greeting + "</h1>");
-        if (body != null) {
-            out.println(body);
-        }
-
+        out.write("yasdfsdaaa");
+        out.flush();
         baseRequest.setHandled(true);
     }
 }
