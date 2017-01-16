@@ -31,11 +31,6 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
         super(name, connectionPool, metricRegistry, refreshTimeSeconds, clock);
     }
 
-//    public static void main(String[] args) {
-//        AdgroupCache cache = new AdgroupCache();
-//        cache.startAsync();
-//    }
-
     @Override
     protected Scheduler scheduler() {
         return Scheduler.newFixedDelaySchedule(0, 5, TimeUnit.SECONDS);
