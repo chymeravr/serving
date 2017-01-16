@@ -30,6 +30,11 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.chymeravr</groupId>
+            <artifactId>enums</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>8.4-702.jdbc4</version>
@@ -40,5 +45,4 @@
             <version>2.5.1</version>
         </dependency>
     </dependencies>
-
 </project>

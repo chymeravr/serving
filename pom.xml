@@ -38,6 +38,7 @@
         <module>war</module>
         <module>database</module>
         <module>cache</module>
+        <module>enums</module>
     </modules>
 
     <dependencies>

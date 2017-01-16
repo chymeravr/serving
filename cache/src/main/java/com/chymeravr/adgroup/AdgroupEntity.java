@@ -1,11 +1,32 @@
 package com.chymeravr.adgroup;
 
-import lombok.Data;
+import com.chymeravr.enums.Pricing;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.ToString;
 
 /**
  * Created by rubbal on 16/1/17.
  */
-@Data
+@EqualsAndHashCode(of = {"id"})
+@ToString
+@Builder
 public class AdgroupEntity {
+    @NonNull
     private final String id;
+    private final double bid;
+    private final double totalBudget;
+    private final double dailyBudget;
+    private final double totalBurn;
+    private final double todayBurn;
+    private final double cmpTotalBudget;
+    private final double cmpDailyBudget;
+    private final double cmpTotalBurn;
+    private final double cmpTodayBurn;
+    @NonNull
+    private final Pricing pricingId;
+    private final Integer hmdId;
+    private final Integer osId;
+    private final Integer minRam;
 }
