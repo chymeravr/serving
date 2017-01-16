@@ -1,16 +1,16 @@
 package com.chymeravr.generic;
 
-import com.chymeravr.RepositoryName;
+import com.chymeravr.CacheName;
 import com.chymeravr.utils.Clock;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.AbstractScheduledService;
+import lombok.Getter;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -23,23 +23,24 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
     private final Counter updatesFailed;
 
     // Mutable state
+    @Getter
     private ImmutableMap<K, V> entities;
     private long lastAttemptedUpdateTime;
     private long lastSuccessfulUpdateTime;
 
     // Immutable state
-    private final RepositoryName repositoryName;
+    private final CacheName cacheName;
     private final DataSource connectionPool;
     private final int refreshTimeSeconds;
     private final Clock clock;
 
-    public RefreshableDbCache(RepositoryName name,
+    public RefreshableDbCache(CacheName name,
                               DataSource connectionPool,
                               MetricRegistry metricRegistry,
                               int refreshTimeSeconds,
-                              Clock clock) throws SQLException {
+                              Clock clock) throws Exception {
         // Immutable state
-        this.repositoryName = name;
+        this.cacheName = name;
         this.connectionPool = connectionPool;
         this.refreshTimeSeconds = refreshTimeSeconds;
         this.clock = clock;
@@ -57,12 +58,15 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
         metricRegistry.register(getMetricName("entityCount"), (Gauge<Integer>) () -> entities.size());
         metricRegistry.register(getMetricName("lastAttemptedUpdate"), (Gauge<Long>) () -> this.lastAttemptedUpdateTime);
         metricRegistry.register(getMetricName("lastSuccessfulUpdate"), (Gauge<Long>) () -> this.lastSuccessfulUpdateTime);
+
+        // Update once
+        runOneIteration();
     }
 
     public abstract ImmutableMap<K, V> load(Connection connection, Map<K, V> currentEntities);
 
     private String getMetricName(String metricName) {
-        return String.format("cache.stats.%s.%s", repositoryName.toString(), metricName);
+        return String.format("cache.stats.%s.%s", cacheName.toString(), metricName);
     }
 
     @Override
@@ -79,6 +83,9 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
 
     @Override
     protected Scheduler scheduler() {
-        return Scheduler.newFixedDelaySchedule(0, this.refreshTimeSeconds, TimeUnit.SECONDS);
+        // Ok to set initial delay as refreshTime as we have an update while constructing the repo
+        return Scheduler.newFixedDelaySchedule(this.refreshTimeSeconds,
+                this.refreshTimeSeconds,
+                TimeUnit.SECONDS);
     }
 }

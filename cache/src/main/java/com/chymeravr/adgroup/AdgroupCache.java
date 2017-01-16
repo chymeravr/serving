@@ -1,6 +1,6 @@
 package com.chymeravr.adgroup;
 
-import com.chymeravr.RepositoryName;
+import com.chymeravr.CacheName;
 import com.chymeravr.enums.Pricing;
 import com.chymeravr.generic.RefreshableDbCache;
 import com.chymeravr.utils.Clock;
@@ -23,11 +23,11 @@ import static com.chymeravr.serving_dao.Tables.*;
  * Created by rubbal on 12/1/17.
  */
 public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
-    public AdgroupCache(RepositoryName name,
+    public AdgroupCache(CacheName name,
                         DataSource connectionPool,
                         MetricRegistry metricRegistry,
                         int refreshTimeSeconds,
-                        Clock clock) throws SQLException {
+                        Clock clock) throws Exception {
         super(name, connectionPool, metricRegistry, refreshTimeSeconds, clock);
     }
 

@@ -1,6 +1,6 @@
 package com.chymeravr.placement;
 
-import com.chymeravr.RepositoryName;
+import com.chymeravr.CacheName;
 import com.chymeravr.enums.AppStore;
 import com.chymeravr.generic.RefreshableDbCache;
 import com.chymeravr.utils.Clock;
@@ -23,11 +23,11 @@ import static com.chymeravr.serving_dao.Tables.PUBLISHER_PLACEMENT;
  * Created by rubbal on 12/1/17.
  */
 public class PlacementCache extends RefreshableDbCache<String, PlacementEntity> {
-    public PlacementCache(RepositoryName name,
+    public PlacementCache(CacheName name,
                           DataSource connectionPool,
                           MetricRegistry metricRegistry,
                           int refreshTimeSeconds,
-                          Clock clock) throws SQLException {
+                          Clock clock) throws Exception {
         super(name, connectionPool, metricRegistry, refreshTimeSeconds, clock);
     }
 

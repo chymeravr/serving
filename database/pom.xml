@@ -59,7 +59,7 @@
                     <dependency>
                         <groupId>postgresql</groupId>
                         <artifactId>postgresql</artifactId>
-                        <version>8.4-702.jdbc4</version>
+                        <version>${postgres.version}</version>
                     </dependency>
                 </dependencies>
 
