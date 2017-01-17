@@ -39,7 +39,7 @@
     <modules>
         <module>server</module>
         <module>thrift</module>
-        <module>war</module>
+        <module>assembly</module>
         <module>database</module>
         <module>cache</module>
         <module>enums</module>
