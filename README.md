@@ -1,8 +1,9 @@
 # Serving
 
 ## Request
-1. Path: `/ads/`
-2. Request
+Path: `/ads/`
+
+#### Request
 ```json
 {
   "timestamp": 123123,
@@ -40,7 +41,7 @@
   "wifi-name": "MarioNGV"
 }
 ```
-3. Response
+#### Response
 ```json
 {
     "statusCode": 200,
