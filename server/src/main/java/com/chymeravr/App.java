@@ -2,10 +2,11 @@ package com.chymeravr;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.chymeravr.ad.AdCache;
 import com.chymeravr.adgroup.AdgroupCache;
 import com.chymeravr.guice.CacheModule;
 import com.chymeravr.placement.PlacementCache;
-import com.chymeravr.rqhandler.RequestHandler;
+import com.chymeravr.rqhandler.EntryPoint;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.eclipse.jetty.server.Handler;
@@ -31,11 +32,15 @@ public class App {
 
         PlacementCache placementCache = injector.getInstance(PlacementCache.class);
         AdgroupCache adgroupCache = injector.getInstance(AdgroupCache.class);
+        AdCache adCache = injector.getInstance(AdCache.class);
+
         Server server = new Server(8080);
 
         ContextHandler context = new ContextHandler("/");
         context.setContextPath("/");
-        context.setHandler(new RequestHandler(adgroupCache, placementCache));
+        System.out.println(adCache.getEntities());
+        System.out.println(adgroupCache.getEntities());
+        context.setHandler(new EntryPoint(adgroupCache, placementCache, adCache));
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         contexts.setHandlers(new Handler[]{context});

@@ -1,6 +1,7 @@
 package com.chymeravr.guice;
 
 import com.chymeravr.CacheName;
+import com.chymeravr.ad.AdCache;
 import com.chymeravr.adgroup.AdgroupCache;
 import com.chymeravr.placement.PlacementCache;
 import com.chymeravr.utils.Clock;
@@ -71,5 +72,13 @@ public class CacheModule extends AbstractModule {
                                           MetricRegistry metricRegistry,
                                           Clock clock) throws Exception {
         return new PlacementCache(CacheName.PlacementCache, dataSource, metricRegistry, defaultRefreshTimeSeconds, clock);
+    }
+
+    @Provides
+    @Singleton
+    AdCache providesAdCache(DataSource dataSource,
+                            MetricRegistry metricRegistry,
+                            Clock clock) throws Exception {
+        return new AdCache(CacheName.AdCache, dataSource, metricRegistry, defaultRefreshTimeSeconds, clock);
     }
 }

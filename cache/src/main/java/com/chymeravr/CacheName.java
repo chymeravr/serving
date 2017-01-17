@@ -5,5 +5,6 @@ package com.chymeravr;
  */
 public enum CacheName {
     AdgroupCache,
-    PlacementCache
+    PlacementCache,
+    AdCache
 }

@@ -12,10 +12,7 @@ import org.jooq.impl.DSL;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 import static com.chymeravr.serving_dao.Tables.*;
 
@@ -31,16 +28,15 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
         super(name, connectionPool, metricRegistry, refreshTimeSeconds, clock);
     }
 
-    @Override
-    protected Scheduler scheduler() {
-        return Scheduler.newFixedDelaySchedule(0, 5, TimeUnit.SECONDS);
-    }
+    private ImmutableMap<Integer, Set<AdgroupEntity>> hmdMapping;
 
     public ImmutableMap<String, AdgroupEntity> load(Connection connection, Map<String, AdgroupEntity> currentEntities) {
         ImmutableMap.Builder<String, AdgroupEntity> mapBuilder = ImmutableMap.builder();
+        Map<Integer, Set<AdgroupEntity>> newHmdMappings = new HashMap<>();
+
         try {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
-            Result<Record16<UUID, Double, Date, Date, Double, Double, Double, Double, Integer, Double, Double, Double, Double, Integer, Integer, Integer>>
+            Result<Record17<UUID, Double, Date, Date, Double, Double, Double, Double, Integer, Boolean, Double, Double, Double, Double, Integer, Integer, Integer>>
                     result = create
                     .select(
                             ADVERTISER_ADGROUP.ID,
@@ -52,6 +48,7 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                             ADVERTISER_ADGROUP.TOTALBURN,
                             ADVERTISER_ADGROUP.TODAYBURN,
                             ADVERTISER_ADGROUP.PRICING_ID,
+                            ADVERTISER_ADGROUP.STATUS,
                             ADVERTISER_CAMPAIGN.TOTALBUDGET,
                             ADVERTISER_CAMPAIGN.DAILYBUDGET,
                             ADVERTISER_CAMPAIGN.TOTALBURN,
@@ -67,7 +64,15 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                     .fetch();
 
             for (Record record : result) {
+                Boolean status = record.get(ADVERTISER_ADGROUP.STATUS);
+
+                if (!status) {
+                    continue;
+                }
+
                 String adgroupId = record.get(ADVERTISER_ADGROUP.ID).toString();
+                Integer hmdId = record.get(ADVERTISER_TARGETING.HMD_ID);
+
                 AdgroupEntity.AdgroupEntityBuilder adgroupBuilder = AdgroupEntity.builder();
                 adgroupBuilder.id(record.get(ADVERTISER_ADGROUP.ID).toString());
                 adgroupBuilder.bid(record.get(ADVERTISER_ADGROUP.BID));
@@ -80,14 +85,34 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                 adgroupBuilder.cmpTotalBurn(record.get(ADVERTISER_CAMPAIGN.TOTALBURN));
                 adgroupBuilder.cmpTodayBurn(record.get(ADVERTISER_CAMPAIGN.TODAYBURN));
                 adgroupBuilder.pricingId(Pricing.getPricing(record.get(ADVERTISER_ADGROUP.PRICING_ID)));
-                adgroupBuilder.hmdId(record.get(ADVERTISER_TARGETING.HMD_ID));
                 adgroupBuilder.osId(record.get(ADVERTISER_TARGETING.OS_ID));
                 adgroupBuilder.minRam(record.get(ADVERTISER_TARGETING.RAM));
-                mapBuilder.put(adgroupId, adgroupBuilder.build());
+                adgroupBuilder.hmdId(hmdId);
+
+                AdgroupEntity adgroup = adgroupBuilder.build();
+                mapBuilder.put(adgroupId, adgroup);
+
+                Set<AdgroupEntity> adgroupEntities = newHmdMappings.get(hmdId);
+                if (adgroupEntities == null) {
+                    adgroupEntities = new HashSet<>();
+                    adgroupEntities.add(adgroup);
+                    newHmdMappings.put(hmdId, adgroupEntities);
+                } else {
+                    adgroupEntities.add(adgroup);
+                }
             }
+            this.hmdMapping = ImmutableMap.copyOf(newHmdMappings);
             return mapBuilder.build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Set<AdgroupEntity> getAdgroupsForHmd(int hmdId) {
+        Set<AdgroupEntity> adgroupEntities = hmdMapping.get(hmdId);
+        if (adgroupEntities == null) {
+            return Collections.emptySet();
+        }
+        return adgroupEntities;
     }
 }

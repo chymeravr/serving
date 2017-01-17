@@ -1,10 +1,7 @@
 package com.chymeravr.adgroup;
 
 import com.chymeravr.enums.Pricing;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * Created by rubbal on 16/1/17.
@@ -12,6 +9,7 @@ import lombok.ToString;
 @EqualsAndHashCode(of = {"id"})
 @ToString
 @Builder
+@Getter
 public class AdgroupEntity {
     @NonNull
     private final String id;

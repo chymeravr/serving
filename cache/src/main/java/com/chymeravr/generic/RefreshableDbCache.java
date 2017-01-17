@@ -78,6 +78,7 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
             this.updatesSucceeded.inc();
         } catch (Exception e) {
             this.updatesFailed.inc();
+            throw new RuntimeException(e);
         }
     }
 

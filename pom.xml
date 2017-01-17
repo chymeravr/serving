@@ -12,6 +12,9 @@
         <jettyVersion>9.4.0.v20161208</jettyVersion>
         <metrics.version>3.1.0</metrics.version>
         <postgres.version>9.4.1208-jdbc42-atlassian-hosted</postgres.version>
+        <jersey.version>2.7</jersey.version>
+        <jackson.version>1.9.6</jackson.version>
+        <guice.version>3.0</guice.version>
     </properties>
 
     <scm>
@@ -64,7 +67,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>3.0</version>
+            <version>${guice.version}</version>
         </dependency>
     </dependencies>
 
