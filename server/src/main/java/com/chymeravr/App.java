@@ -18,8 +18,11 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
  * The simplest possible Jetty server.
  */
 public class App {
-    @Parameter(names={"--config", "-c"})
+    @Parameter(names={"--config", "-c"}, description = "config file", required = true)
     private String configFilePath;
+
+    @Parameter(names = {"--port", "-p"}, description = "port", required = true)
+    private int port;
 
     public static void main(String ... args) throws Exception {
         App app = new App();
@@ -34,7 +37,7 @@ public class App {
         AdgroupCache adgroupCache = injector.getInstance(AdgroupCache.class);
         AdCache adCache = injector.getInstance(AdCache.class);
 
-        Server server = new Server(8080);
+        Server server = new Server(port);
 
         ContextHandler context = new ContextHandler("/");
         context.setContextPath("/");
