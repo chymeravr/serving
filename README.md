@@ -10,11 +10,11 @@ Path: `/ads/`
   "appId": "myapp",
   "placements": [
     {
-      "id": 1,
+      "id": "1uuid",
       "format": "IMG_360"
     }, 
     {
-      "id": 2,
+      "id": "2uuid",
       "format": "IMG_360"
     }
   ],
@@ -38,7 +38,7 @@ Path: `/ads/`
     "ram": "4gb"
   },
   "connectivity": "Wifi",
-  "wifi-name": "MarioNGV"
+  "wifiName": "MarioNGV"
 }
 ```
 #### Response
@@ -53,7 +53,7 @@ Path: `/ads/`
         "mediaUrl": "http://chymeravr.com"
       },
       "placementId2": {
-        "servingId": "2345872089ggggg",
+        "servingId": "2345872s089ggggg",
         "mediaUrl": "http://chymeravr.com"
       }
     }

@@ -1,4 +1,4 @@
-namespace java com.chymeravr
+namespace java com.chymeravr.thrift.serving
 
 enum ResponseCode {
     SERVED,
