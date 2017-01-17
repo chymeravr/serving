@@ -40,9 +40,7 @@ public class App {
         Server server = new Server(port);
 
         ContextHandler context = new ContextHandler("/");
-        context.setContextPath("/");
-        System.out.println(adCache.getEntities());
-        System.out.println(adgroupCache.getEntities());
+        context.setContextPath("/ads/");
         context.setHandler(new EntryPoint(adgroupCache, placementCache, adCache));
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();

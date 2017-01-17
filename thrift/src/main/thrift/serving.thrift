@@ -17,14 +17,15 @@ enum AdFormat {
     IMG_360,
     VID_360
 }
+
 struct RequestInfo {
     1: required string appId;
     2: required string placementId;
     3: required AdFormat format;
-    4: required i32 OsId;
-    5: required i32 OsVersion;
-    6: required i32 deviceId;
-    7: required i32 HmdId;
+    4: required i32 HmdId;
+    5: required string OsId;
+    6: required string OsVersion;
+    7: required string deviceId;
 }
 
 struct ImpressionInfo {
@@ -37,10 +38,10 @@ struct ImpressionInfo {
 }
 
 struct ServingLog {
-    1: required string servingId;
+    1: required string requestId;
     2: required i32 sdkVersion;
     3: required list<i32> experimentIds;
     4: required RequestInfo requestInfo;
     5: required ResponseCode responseCode;
-    6: optional ImpressionInfo impressionInfo;
+    6: optional list<ImpressionInfo> impressionInfo;
 }
