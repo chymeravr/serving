@@ -73,7 +73,7 @@ public class EntryPoint extends AbstractHandler {
         for (AdgroupEntity adgroupEntity : adgroupsForHmd) {
             Set<AdEntity> adsForAdgroup = adCache.getAdsForAdgroup(adgroupEntity.getId());
             for (AdEntity ad : adsForAdgroup) {
-                ads.add(new ResponseObjects.AdMeta(UUID.randomUUID().toString(), ad.getUrl()));
+                ads.add(new ResponseObjects.AdMeta(UUID.randomUUID().toString(), CREATIVE_URL_PREFIX + ad.getUrl()));
                 adsSelected++;
                 if (adsSelected == adsToSelect) {
                     return ads;
