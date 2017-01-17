@@ -59,3 +59,8 @@ Path: `/ads/`
     }
 }
 ```
+
+#### Execution
+* `mvn clean install`
+* (Fix the paths in serving.config)`java -jar assembly/target/*-jar-with-dependencies.jar -c <config> file -p 8080`
+
