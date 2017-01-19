@@ -83,9 +83,5 @@ public class CacheModule extends AbstractModule {
         return new AdCache(CacheName.AdCache, dataSource, metricRegistry, defaultRefreshTimeSeconds, clock);
     }
 
-    @Provides
-    @Singleton
-    AdFetcher providesAdFetcher(AdgroupCache adgroupCache, AdCache adCache) {
-        return new AdFetcher(adgroupCache, adCache);
-    }
+
 }

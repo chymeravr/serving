@@ -27,15 +27,12 @@ public abstract class EntryPoint extends AbstractHandler {
     public void handle(String target,
                        org.eclipse.jetty.server.Request baseRequest,
                        HttpServletRequest request,
-                       HttpServletResponse response) throws IOException,
-            ServletException {
+                       HttpServletResponse response) throws IOException, ServletException {
         final UUID requestId = UUID.randomUUID();
 
         Request adRequest = deserializer.deserializeRequest(request);
         Response adResponse = adFetcher.getAdResponse(adRequest);
-
-        response.setContentType("application/json; charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
+        setReponseHeaders(response);
         PrintWriter out = response.getWriter();
         if (adResponse != null) {
             out.write(new String(serializer.serialize(adResponse)));
@@ -43,4 +40,6 @@ public abstract class EntryPoint extends AbstractHandler {
         out.flush();
         baseRequest.setHandled(true);
     }
+
+    protected abstract void setReponseHeaders(HttpServletResponse response);
 }
