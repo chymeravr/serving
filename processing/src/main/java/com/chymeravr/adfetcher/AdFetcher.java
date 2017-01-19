@@ -21,7 +21,7 @@ public class AdFetcher {
     private final AdCache adCache;
     private static final String CREATIVE_URL_PREFIX = "https://chymcreative.blob.core.windows.net/creatives/";
 
-    public Response getAdResponse(Request adRequest) {
+    public Response getAdResponse(Request adRequest, List<Integer> expIds) {
         List<RequestObjects.Placement> placements = adRequest.getPlacements();
         int hmdId = adRequest.getHmdId();
         ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmd(hmdId));
@@ -34,7 +34,7 @@ public class AdFetcher {
         for (int i = 0; i < topAds.size(); i++) { // At most as many top Ads as placements
             adsMap.put(placements.get(i).getId(), topAds.get(i));
         }
-        return new Response(200, "OK", -1, adsMap);
+        return new Response(200, "OK", expIds, adsMap);
     }
 
     private List<ResponseObjects.AdMeta> getTopAds(ArrayList<AdgroupEntity> adgroupsForHmd, int adsToSelect) {
@@ -44,11 +44,11 @@ public class AdFetcher {
         for (AdgroupEntity adgroupEntity : adgroupsForHmd) {
             Set<AdEntity> adsForAdgroup = adCache.getAdsForAdgroup(adgroupEntity.getId());
             for (AdEntity ad : adsForAdgroup) {
-                ads.add(new ResponseObjects.AdMeta(UUID.randomUUID().toString(), CREATIVE_URL_PREFIX + ad.getUrl()));
-                adsSelected++;
                 if (adsSelected == adsToSelect) {
                     return ads;
                 }
+                ads.add(new ResponseObjects.AdMeta(UUID.randomUUID().toString(), CREATIVE_URL_PREFIX + ad.getUrl()));
+                adsSelected++;
             }
         }
         return ads;

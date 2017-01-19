@@ -31,8 +31,8 @@ public class App {
         Injector injector = Guice.createInjector(new CacheModule(this.configFilePath), new ProcessingModule());
         V1EntryPoint v1EntryPoint = injector.getInstance(V1EntryPoint.class);
 
-        ContextHandler context = new ContextHandler("/api/");
-        context.setContextPath("v1/ads/");
+        ContextHandler context = new ContextHandler();
+        context.setContextPath("/api/v1/ads/");
         context.setHandler(v1EntryPoint);
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();

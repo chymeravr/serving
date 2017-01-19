@@ -66,6 +66,7 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
             for (Record record : result) {
                 Boolean status = record.get(ADVERTISER_ADGROUP.STATUS);
 
+                // Can put this in SQL but we might need this for delta updates
                 if (!status) {
                     continue;
                 }

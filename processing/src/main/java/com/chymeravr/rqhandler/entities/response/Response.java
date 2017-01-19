@@ -2,6 +2,7 @@ package com.chymeravr.rqhandler.entities.response;
 
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,6 +12,6 @@ import java.util.Map;
 public class Response {
     private final int statusCode;
     private final String status;
-    private final int experimentId;
+    private final List<Integer> experimentId;
     private final Map<String, ResponseObjects.AdMeta> ads;
 }

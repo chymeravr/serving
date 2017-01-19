@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -31,7 +32,7 @@ public abstract class EntryPoint extends AbstractHandler {
         final UUID requestId = UUID.randomUUID();
 
         Request adRequest = deserializer.deserializeRequest(request);
-        Response adResponse = adFetcher.getAdResponse(adRequest);
+        Response adResponse = adFetcher.getAdResponse(adRequest, new ArrayList<>());
         setReponseHeaders(response);
         PrintWriter out = response.getWriter();
         if (adResponse != null) {

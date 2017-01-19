@@ -61,6 +61,7 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
 
         // Update once
         runOneIteration();
+        this.startAsync();
     }
 
     public abstract ImmutableMap<K, V> load(Connection connection, Map<K, V> currentEntities);
