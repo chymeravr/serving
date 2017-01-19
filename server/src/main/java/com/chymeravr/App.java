@@ -3,6 +3,7 @@ package com.chymeravr;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.chymeravr.ad.AdCache;
+import com.chymeravr.adfetcher.AdFetcher;
 import com.chymeravr.adgroup.AdgroupCache;
 import com.chymeravr.guice.CacheModule;
 import com.chymeravr.placement.PlacementCache;
@@ -14,9 +15,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
-/**
- * The simplest possible Jetty server.
- */
 public class App {
     @Parameter(names={"--config", "-c"}, description = "config file", required = true)
     private String configFilePath;
@@ -36,12 +34,13 @@ public class App {
         PlacementCache placementCache = injector.getInstance(PlacementCache.class);
         AdgroupCache adgroupCache = injector.getInstance(AdgroupCache.class);
         AdCache adCache = injector.getInstance(AdCache.class);
+        AdFetcher adFetcher = injector.getInstance(AdFetcher.class);
 
         Server server = new Server(port);
 
-        ContextHandler context = new ContextHandler("/");
+        ContextHandler context = new ContextHandler("/api/v1");
         context.setContextPath("/ads/");
-        context.setHandler(new EntryPoint(adgroupCache, placementCache, adCache));
+        context.setHandler(new EntryPoint(adFetcher));
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         contexts.setHandlers(new Handler[]{context});

@@ -44,6 +44,7 @@
         <module>cache</module>
         <module>enums</module>
         <module>processing</module>
+        <module>logging</module>
     </modules>
 
     <dependencies>

@@ -1,4 +1,4 @@
-package com.chymeravr.rqhandler.entities.v1.response;
+package com.chymeravr.rqhandler.entities.response;
 
 import lombok.Data;
 

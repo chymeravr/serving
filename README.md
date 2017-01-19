@@ -1,7 +1,7 @@
 # Serving
 
 ## Request
-Path: `/ads/`
+Path: `/api/v1/ads`
 
 #### Request
 ```json

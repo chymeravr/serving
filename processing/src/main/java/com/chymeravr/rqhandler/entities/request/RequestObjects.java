@@ -1,4 +1,4 @@
-package com.chymeravr.rqhandler.entities.v1.request;
+package com.chymeravr.rqhandler.entities.request;
 
 import com.chymeravr.thrift.serving.AdFormat;
 import lombok.Data;

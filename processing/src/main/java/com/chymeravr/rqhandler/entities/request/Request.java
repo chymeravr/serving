@@ -1,7 +1,6 @@
-package com.chymeravr.rqhandler.entities.v1.request;
+package com.chymeravr.rqhandler.entities.request;
 
 import lombok.Data;
-import lombok.NonNull;
 
 import java.util.List;
 
@@ -9,7 +8,7 @@ import java.util.List;
  * Created by rubbal on 17/1/17.
  */
 @Data
-public class AdRequest {
+public class Request {
     private final long timestamp;
     private final String appId;
     private final List<RequestObjects.Placement> placements;

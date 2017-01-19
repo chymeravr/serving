@@ -1,23 +1,27 @@
-package com.chymeravr.rqhandler;
+package com.chymeravr.rqhandler.entities.iface;
 
 import com.chymeravr.adfetcher.AdFetcher;
 import com.chymeravr.rqhandler.entities.request.Request;
 import com.chymeravr.rqhandler.entities.response.Response;
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.UUID;
 
-@RequiredArgsConstructor
-public class EntryPoint extends AbstractHandler {
+/**
+ * Created by rubbal on 19/1/17.
+ */
 
+@RequiredArgsConstructor
+public abstract class EntryPoint extends AbstractHandler {
+
+    private final RequestDeserializer deserializer;
+    private final ResponseSerializer serializer;
     private final AdFetcher adFetcher;
 
     public void handle(String target,
@@ -27,28 +31,16 @@ public class EntryPoint extends AbstractHandler {
             ServletException {
         final UUID requestId = UUID.randomUUID();
 
-        Request adRequest = parseRequest(request);
+        Request adRequest = deserializer.deserializeRequest(request);
         Response adResponse = adFetcher.getAdResponse(adRequest);
 
         response.setContentType("application/json; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         PrintWriter out = response.getWriter();
         if (adResponse != null) {
-            out.write(new Gson().toJson(adResponse));
+            out.write(new String(serializer.serialize(adResponse)));
         }
         out.flush();
         baseRequest.setHandled(true);
-    }
-
-
-    private Request parseRequest(HttpServletRequest request) throws IOException {
-        StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-        }
-        String data = buffer.toString();
-        return new Gson().fromJson(data, Request.class);
     }
 }
