@@ -5,9 +5,7 @@ import com.chymeravr.ad.AdEntity;
 import com.chymeravr.adgroup.AdgroupCache;
 import com.chymeravr.adgroup.AdgroupEntity;
 import com.chymeravr.rqhandler.entities.request.Request;
-import com.chymeravr.rqhandler.entities.request.RequestObjects;
-import com.chymeravr.rqhandler.entities.response.Response;
-import com.chymeravr.rqhandler.entities.response.ResponseObjects;
+import com.chymeravr.rqhandler.entities.response.InternalAdResponse;
 import com.chymeravr.thrift.serving.ImpressionInfo;
 import com.chymeravr.thrift.serving.Placement;
 import lombok.Data;
@@ -23,7 +21,7 @@ public class AdFetcher {
     private final AdCache adCache;
     private static final String CREATIVE_URL_PREFIX = "https://chymcreative.blob.core.windows.net/creatives/";
 
-    public Response getAdResponse(Request adRequest, List<Integer> expIds) {
+    public InternalAdResponse getAdResponse(Request adRequest, List<Integer> expIds) {
         List<Placement> placements = adRequest.getPlacements();
         int hmdId = adRequest.getHmdId();
         ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmd(hmdId));
@@ -36,7 +34,7 @@ public class AdFetcher {
         for (int i = 0; i < topAds.size(); i++) { // At most as many top Ads as placements
             adsMap.put(placements.get(i).getId(), topAds.get(i));
         }
-        return new Response(200, "OK", expIds, adsMap);
+        return new InternalAdResponse(200, "OK", expIds, adsMap);
     }
 
     private List<ImpressionInfo> getTopAds(ArrayList<AdgroupEntity> adgroupsForHmd, int adsToSelect) {
@@ -54,7 +52,8 @@ public class AdFetcher {
                         adgroupEntity.getId(),
                         ad.getId(),
                         adgroupEntity.getBid(),
-                        adgroupEntity.getBid() * 0.6);
+                        adgroupEntity.getBid() * 0.6,
+                        CREATIVE_URL_PREFIX + ad.getUrl());
                 ads.add(impressionInfo);
                 adsSelected++;
             }

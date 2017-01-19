@@ -33,12 +33,13 @@ struct RequestInfo {
 }
 
 struct ImpressionInfo {
-    1: required string impressionId;
+    1: required string servingId;
     2: required string advertiserId;
     3: required string adgroupId;
     4: required string adId;
     5: required double costPrice;
     6: required double sellingPrice;
+    7: required string creativeUrl;
 }
 
 struct ServingLog {

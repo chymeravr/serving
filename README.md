@@ -12,11 +12,11 @@ Path: `/api/v1/ads`
   "placements": [
     {
       "id": "1uuid",
-      "format": "IMG_360"
+      "adFormat": "IMG_360"
     }, 
     {
       "id": "2uuid",
-      "format": "IMG_360"
+      "adFormat": "IMG_360"
     }
   ],
   "osId": "Android",

@@ -3,14 +3,14 @@ package com.chymeravr.rqhandler.iface;
 import com.chymeravr.adfetcher.AdFetcher;
 import com.chymeravr.logger.ResponseLogger;
 import com.chymeravr.rqhandler.entities.request.Request;
-import com.chymeravr.rqhandler.entities.response.Response;
+import com.chymeravr.rqhandler.entities.response.AdResponse;
+import com.chymeravr.rqhandler.entities.response.InternalAdResponse;
 import com.chymeravr.thrift.serving.RequestInfo;
 import com.chymeravr.thrift.serving.ResponseCode;
 import com.chymeravr.thrift.serving.ServingLog;
 import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TJSONProtocol;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import javax.servlet.ServletException;
@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,14 +42,14 @@ public abstract class EntryPoint extends AbstractHandler {
         final UUID requestId = UUID.randomUUID();
         List<Integer> experiments = new ArrayList<>();
         Request adRequest = deserializer.deserializeRequest(request);
-        Response adResponse = adFetcher.getAdResponse(adRequest, experiments);
+        InternalAdResponse internalAdResponse = adFetcher.getAdResponse(adRequest, experiments);
+        AdResponse adResponse = new AdResponse(internalAdResponse);
         setReponseHeaders(response);
         PrintWriter out = response.getWriter();
-        if (adResponse != null) {
-            out.write(new String(serializer.serialize(adResponse)));
-        }
+        out.write(new String(serializer.serialize(adResponse)));
         out.flush();
         baseRequest.setHandled(true);
+
         RequestInfo requestInfo = new RequestInfo(
                 adRequest.getAppId(),
                 adRequest.getPlacements(),
@@ -56,17 +57,21 @@ public abstract class EntryPoint extends AbstractHandler {
                 adRequest.getOsId(),
                 adRequest.getOsVersion(),
                 adRequest.getDeviceInfo().getManufacturer());
+
         ServingLog servingLog = new ServingLog(requestId.toString(),
                 adRequest.getSdkVersion(),
                 experiments,
                 requestInfo,
                 ResponseCode.SERVED);
-        if (adResponse != null && adResponse.getAds() != null) {
-            servingLog.setImpressionInfo(adResponse.getAds());
+
+
+        if (adResponse.getAds() != null) {
+            servingLog.setImpressionInfo(internalAdResponse.getAds());
         }
 
         try {
-            responseLogger.sendMessage(requestId.toString().substring(0, 2), new String(new TSerializer(TJSONProtocol::new).serialize(servingLog)));
+            responseLogger.sendMessage(requestId.toString().substring(0, 2),
+                    Base64.getEncoder().encodeToString(new TSerializer().serialize(servingLog)));
         } catch (TException e) {
             e.printStackTrace();
         }

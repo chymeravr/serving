@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by rubbal on 17/1/17.
  */
 @Data
-public class Response {
+public class InternalAdResponse {
     private final int statusCode;
     private final String status;
     private final List<Integer> experimentId;
