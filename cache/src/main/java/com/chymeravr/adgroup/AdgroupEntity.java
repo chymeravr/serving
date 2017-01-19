@@ -13,6 +13,7 @@ import lombok.*;
 public class AdgroupEntity {
     @NonNull
     private final String id;
+    private final String advertiserId;
     private final double bid;
     private final double totalBudget;
     private final double dailyBudget;

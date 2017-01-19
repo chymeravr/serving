@@ -1,5 +1,6 @@
 package com.chymeravr.rqhandler.entities.request;
 
+import com.chymeravr.thrift.serving.Placement;
 import lombok.Data;
 
 import java.util.List;
@@ -10,8 +11,9 @@ import java.util.List;
 @Data
 public class Request {
     private final long timestamp;
+    private final int sdkVersion;
     private final String appId;
-    private final List<RequestObjects.Placement> placements;
+    private final List<Placement> placements;
     private final String osId;
     private final String osVersion;
     private final String userId;

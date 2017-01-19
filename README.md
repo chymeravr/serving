@@ -6,6 +6,7 @@ Path: `/api/v1/ads`
 #### Request
 ```json
 {
+  "sdkVersion": 1,
   "timestamp": 123123,
   "appId": "myapp",
   "placements": [

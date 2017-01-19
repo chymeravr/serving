@@ -1,4 +1,4 @@
-package com.chymeravr.rqhandler.entities.iface;
+package com.chymeravr.rqhandler.iface;
 
 import com.chymeravr.rqhandler.entities.request.Request;
 

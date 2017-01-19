@@ -18,14 +18,18 @@ enum AdFormat {
     VID_360
 }
 
+struct Placement {
+    1: required string id;
+    2: required AdFormat adFormat;
+}
+
 struct RequestInfo {
     1: required string appId;
-    2: required string placementId;
-    3: required AdFormat format;
-    4: required i32 HmdId;
-    5: required string OsId;
-    6: required string OsVersion;
-    7: required string deviceId;
+    2: required list<Placement> placementIds;
+    3: required i32 HmdId;
+    4: required string OsId;
+    5: required string OsVersion;
+    6: required string deviceId;
 }
 
 struct ImpressionInfo {
@@ -43,5 +47,5 @@ struct ServingLog {
     3: required list<i32> experimentIds;
     4: required RequestInfo requestInfo;
     5: required ResponseCode responseCode;
-    6: optional list<ImpressionInfo> impressionInfo;
+    6: optional map<string, ImpressionInfo> impressionInfo;
 }

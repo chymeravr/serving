@@ -36,9 +36,10 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
 
         try {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
-            Result<Record17<UUID, Double, Date, Date, Double, Double, Double, Double, Integer, Boolean, Double, Double, Double, Double, Integer, Integer, Integer>>
+            Result<Record18<UUID, UUID, Double, Date, Date, Double, Double, Double, Double, Integer, Boolean, Double, Double, Double, Double, Integer, Integer, Integer>>
                     result = create
                     .select(
+                            CHYM_USER_PROFILE.ID,
                             ADVERTISER_ADGROUP.ID,
                             ADVERTISER_ADGROUP.BID,
                             ADVERTISER_ADGROUP.STARTDATE,
@@ -61,6 +62,7 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                     .join(ADVERTISER_ADGROUP_TARGETING).on(ADVERTISER_ADGROUP.ID.equal(ADVERTISER_ADGROUP_TARGETING.ADGROUP_ID))
                     .join(ADVERTISER_TARGETING).on(ADVERTISER_TARGETING.ID.equal(ADVERTISER_ADGROUP_TARGETING.TARGETING_ID))
                     .join(ADVERTISER_CAMPAIGN).on(ADVERTISER_ADGROUP.CAMPAIGN_ID.equal(ADVERTISER_CAMPAIGN.ID))
+                    .join(CHYM_USER_PROFILE).on(ADVERTISER_CAMPAIGN.USER_ID.eq(CHYM_USER_PROFILE.USER_ID))
                     .fetch();
 
             for (Record record : result) {
@@ -76,6 +78,7 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
 
                 AdgroupEntity.AdgroupEntityBuilder adgroupBuilder = AdgroupEntity.builder();
                 adgroupBuilder.id(record.get(ADVERTISER_ADGROUP.ID).toString());
+                adgroupBuilder.advertiserId(record.get(CHYM_USER_PROFILE.ID).toString());
                 adgroupBuilder.bid(record.get(ADVERTISER_ADGROUP.BID));
                 adgroupBuilder.totalBudget(record.get(ADVERTISER_ADGROUP.TOTALBUDGET));
                 adgroupBuilder.dailyBudget(record.get(ADVERTISER_ADGROUP.DAILYBUDGET));

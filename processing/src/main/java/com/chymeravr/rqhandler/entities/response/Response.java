@@ -1,5 +1,6 @@
 package com.chymeravr.rqhandler.entities.response;
 
+import com.chymeravr.thrift.serving.ImpressionInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public class Response {
     private final int statusCode;
     private final String status;
     private final List<Integer> experimentId;
-    private final Map<String, ResponseObjects.AdMeta> ads;
+    private final Map<String, ImpressionInfo> ads;
 }

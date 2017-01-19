@@ -83,7 +83,6 @@
                             <excludes>
                                 auth.*
                                 | django.*
-                                | chym_user.*
                             </excludes>
                             <inputSchema>public</inputSchema>
                         </database>

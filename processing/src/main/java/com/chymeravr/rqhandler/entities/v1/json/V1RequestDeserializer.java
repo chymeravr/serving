@@ -1,6 +1,6 @@
 package com.chymeravr.rqhandler.entities.v1.json;
 
-import com.chymeravr.rqhandler.entities.iface.RequestDeserializer;
+import com.chymeravr.rqhandler.iface.RequestDeserializer;
 import com.chymeravr.rqhandler.entities.request.Request;
 import com.google.gson.Gson;
 

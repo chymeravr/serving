@@ -22,12 +22,6 @@ public class RequestObjects {
     }
 
     @Data
-    public static class Placement {
-        private final String id;
-        private final AdFormat format;
-    }
-
-    @Data
     public static class DeviceInfo {
         private final String manufacturer;
         private final String model;

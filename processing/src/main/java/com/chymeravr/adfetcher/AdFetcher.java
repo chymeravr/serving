@@ -8,6 +8,8 @@ import com.chymeravr.rqhandler.entities.request.Request;
 import com.chymeravr.rqhandler.entities.request.RequestObjects;
 import com.chymeravr.rqhandler.entities.response.Response;
 import com.chymeravr.rqhandler.entities.response.ResponseObjects;
+import com.chymeravr.thrift.serving.ImpressionInfo;
+import com.chymeravr.thrift.serving.Placement;
 import lombok.Data;
 
 import java.util.*;
@@ -22,23 +24,23 @@ public class AdFetcher {
     private static final String CREATIVE_URL_PREFIX = "https://chymcreative.blob.core.windows.net/creatives/";
 
     public Response getAdResponse(Request adRequest, List<Integer> expIds) {
-        List<RequestObjects.Placement> placements = adRequest.getPlacements();
+        List<Placement> placements = adRequest.getPlacements();
         int hmdId = adRequest.getHmdId();
         ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmd(hmdId));
 
         adgroupsForHmd.sort(Comparator.comparingDouble(x -> -x.getBid())); // reverse sort
 
-        List<ResponseObjects.AdMeta> topAds = getTopAds(adgroupsForHmd, placements.size());
+        List<ImpressionInfo> topAds = getTopAds(adgroupsForHmd, placements.size());
         // Assign ads to a placement
-        Map<String, ResponseObjects.AdMeta> adsMap = new HashMap<>();
+        Map<String, ImpressionInfo> adsMap = new HashMap<>();
         for (int i = 0; i < topAds.size(); i++) { // At most as many top Ads as placements
             adsMap.put(placements.get(i).getId(), topAds.get(i));
         }
         return new Response(200, "OK", expIds, adsMap);
     }
 
-    private List<ResponseObjects.AdMeta> getTopAds(ArrayList<AdgroupEntity> adgroupsForHmd, int adsToSelect) {
-        List<ResponseObjects.AdMeta> ads = new ArrayList<>();
+    private List<ImpressionInfo> getTopAds(ArrayList<AdgroupEntity> adgroupsForHmd, int adsToSelect) {
+        List<ImpressionInfo> ads = new ArrayList<>();
         int adsSelected = 0;
 
         for (AdgroupEntity adgroupEntity : adgroupsForHmd) {
@@ -47,7 +49,13 @@ public class AdFetcher {
                 if (adsSelected == adsToSelect) {
                     return ads;
                 }
-                ads.add(new ResponseObjects.AdMeta(UUID.randomUUID().toString(), CREATIVE_URL_PREFIX + ad.getUrl()));
+                ImpressionInfo impressionInfo = new ImpressionInfo(UUID.randomUUID().toString(),
+                        adgroupEntity.getAdvertiserId(),
+                        adgroupEntity.getId(),
+                        ad.getId(),
+                        adgroupEntity.getBid(),
+                        adgroupEntity.getBid() * 0.6);
+                ads.add(impressionInfo);
                 adsSelected++;
             }
         }
