@@ -43,10 +43,11 @@ struct ImpressionInfo {
 }
 
 struct ServingLog {
-    1: required string requestId;
-    2: required i32 sdkVersion;
-    3: required list<i32> experimentIds;
-    4: required RequestInfo requestInfo;
-    5: required ResponseCode responseCode;
-    6: optional map<string, ImpressionInfo> impressionInfo;
+    1: required i64 timestamp;
+    2: required string requestId;
+    3: required i32 sdkVersion;
+    4: required list<i32> experimentIds;
+    5: required RequestInfo requestInfo;
+    6: required ResponseCode responseCode;
+    7: optional map<string, ImpressionInfo> impressionInfo;
 }
