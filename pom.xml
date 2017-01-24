@@ -15,10 +15,10 @@
         <jersey.version>2.7</jersey.version>
         <jackson.version>1.9.6</jackson.version>
         <guice.version>3.0</guice.version>
+        <kafka.version>0.10.1.0-cp2</kafka.version>
     </properties>
 
     <scm>
-
         <developerConnection>scm:git:git@bitbucket.org:rubbal/adserver.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
@@ -64,7 +64,6 @@
             <artifactId>metrics-core</artifactId>
             <version>${metrics.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -97,29 +96,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-            <!--<groupId>external.atlassian.jgitflow</groupId>-->
-            <!--<artifactId>jgitflow-maven-plugin</artifactId>-->
-            <!--<version>1.0-m5.1</version>-->
-            <!--<configuration>-->
-            <!--&lt;!&ndash; Enable this to push to origin using SSH keys &ndash;&gt;-->
-            <!--<enableSshAgent>true</enableSshAgent>-->
-            <!--&lt;!&ndash; Keep your maven submodules at the same version as the parent POM &ndash;&gt;-->
-            <!--<autoVersionSubmodules>true</autoVersionSubmodules>-->
-            <!--<squash>true</squash>-->
-            <!--<flowInitContext>-->
-            <!--&lt;!&ndash;-->
-            <!--You can customize your development branch name. Why? Because it's faster to type-->
-            <!--'git push origin dvlp'-->
-            <!--than-->
-            <!--'git push origin develop'-->
-            <!--;-)-->
-            <!--&ndash;&gt;-->
-            <!--<developBranchName>develop</developBranchName>-->
-            <!--&lt;!&ndash; You can also customize your tag prefixes &ndash;&gt;-->
-            <!--</flowInitContext>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
         </plugins>
     </build>
 
