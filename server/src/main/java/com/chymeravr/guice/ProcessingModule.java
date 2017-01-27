@@ -43,8 +43,9 @@ public class ProcessingModule extends AbstractModule {
 
     @Provides
     @Singleton
+    // TODO : Add properties from file
     EventLogger providesEventLogger() {
-        return new EventLogger();
+        return new EventLogger(null);
     }
 
     @Provides

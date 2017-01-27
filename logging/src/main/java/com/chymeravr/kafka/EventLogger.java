@@ -1,25 +1,32 @@
 package com.chymeravr.kafka;
 
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.*;
 
 import java.util.Properties;
+import java.util.concurrent.Future;
 
 /**
  * Created by rubbal on 19/1/17.
  */
 public class EventLogger {
-    public void sendMessage(String requestId, String event) {
+    private final Producer<String, String> producer;
+
+    public EventLogger(Properties properties) {
         Properties props = new Properties();
-        props.put("metadata.broker.list", "localhost:9092");
-        props.put("serializer.class", "kafka.serializer.StringEncoder");
-        props.put("partitioner.class", "com.chymeravr.kafka.Partitioner");
-        props.put("request.required.acks", "1");
-        ProducerConfig config = new ProducerConfig(props);
-        Producer<String, String> producer = new Producer<>(config);
-        KeyedMessage<String, String> data = new KeyedMessage<>("test", requestId, event);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "23.101.198.81:9092");
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        props.put(ProducerConfig.ACKS_CONFIG, "1");
+        this.producer = new KafkaProducer<>(props);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            // TODO : Find out if close method flushes before close
+            producer.flush();
+            producer.close();
+        }));
+    }
+
+    public void sendMessage(String requestId, String event) {
+        ProducerRecord<String, String> data = new ProducerRecord<>("serving", requestId, event);
         producer.send(data);
-        producer.close();
     }
 }

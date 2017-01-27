@@ -49,5 +49,6 @@ struct ServingLog {
     4: required list<i32> experimentIds;
     5: required RequestInfo requestInfo;
     6: required ResponseCode responseCode;
-    7: optional map<string, ImpressionInfo> impressionInfo;
+    7: required string placementId;
+    8: required ImpressionInfo impressionInfo;
 }
