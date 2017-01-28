@@ -23,7 +23,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.chymeravr.serving.App</mainClass>
+                            <mainClass>com.chymeravr.serving.server.App</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
