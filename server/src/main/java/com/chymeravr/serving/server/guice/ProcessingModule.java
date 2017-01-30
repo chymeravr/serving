@@ -3,8 +3,8 @@ package com.chymeravr.serving.server.guice;
 import com.chymeravr.serving.cache.ad.AdCache;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
 import com.chymeravr.serving.logging.EventLogger;
+import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
-import com.chymeravr.serving.processing.logger.ResponseLogger;
 import com.chymeravr.serving.processing.rqhandler.V1EntryPoint;
 import com.chymeravr.serving.processing.rqhandler.entities.v1.json.V1RequestDeserializer;
 import com.chymeravr.serving.processing.rqhandler.entities.v1.json.V1ResponseSerializer;
@@ -48,21 +48,22 @@ public class ProcessingModule extends AbstractModule {
 
     @Provides
     @Singleton
-    EventLogger providesEventLogger() {
+    ResponseLogger providesEventLogger() {
         return new EventLogger(configuration.subset("kafka"));
     }
 
-    @Provides
-    @Singleton
-    ResponseLogger providesResponseLogger(EventLogger eventLogger) {
-        return new ResponseLogger(eventLogger);
-    }
 
     @Provides
     @Singleton
     V1EntryPoint providesV1EntryPoint(RequestDeserializer deserializer,
                                       ResponseSerializer serializer,
-                                      AdFetcher adFetcher, ResponseLogger responseLogger) {
-        return new V1EntryPoint(deserializer, serializer, adFetcher, responseLogger);
+                                      AdFetcher adFetcher,
+                                      ResponseLogger responseLogger) {
+        return new V1EntryPoint(deserializer,
+                serializer,
+                adFetcher,
+                responseLogger,
+                configuration.getString("kafkaTopicName")
+        );
     }
 }

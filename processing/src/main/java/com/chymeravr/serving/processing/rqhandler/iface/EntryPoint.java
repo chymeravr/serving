@@ -1,9 +1,9 @@
 package com.chymeravr.serving.processing.rqhandler.iface;
 
-import com.chymeravr.serving.processing.rqhandler.entities.response.AdResponse;
+import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
-import com.chymeravr.serving.processing.logger.ResponseLogger;
 import com.chymeravr.serving.processing.rqhandler.entities.request.Request;
+import com.chymeravr.serving.processing.rqhandler.entities.response.AdResponse;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import com.chymeravr.serving.thrift.ImpressionInfo;
 import com.chymeravr.serving.thrift.RequestInfo;
@@ -37,6 +37,7 @@ public abstract class EntryPoint extends AbstractHandler {
     private final ResponseSerializer serializer;
     private final AdFetcher adFetcher;
     private final ResponseLogger responseLogger;
+    private final String downStreamTopicName;
 
     public void handle(String target,
                        org.eclipse.jetty.server.Request baseRequest,
@@ -75,7 +76,9 @@ public abstract class EntryPoint extends AbstractHandler {
                     placementId,
                     impressionInfo);
             try {
-                responseLogger.sendMessage(impressionInfo.getServingId(), encode(new TSerializer(TJSONProtocol::new).serialize(servingLog)));
+                responseLogger.sendMessage(impressionInfo.getServingId(),
+                        encode(new TSerializer(TJSONProtocol::new).serialize(servingLog)),
+                        downStreamTopicName);
             } catch (Exception e) {
                 log.error("Unable to send kafka message");
             }

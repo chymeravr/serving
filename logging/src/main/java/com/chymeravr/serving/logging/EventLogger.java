@@ -13,7 +13,7 @@ import java.util.Properties;
  * Created by rubbal on 19/1/17.
  */
 @Slf4j
-public class EventLogger {
+public class EventLogger implements ResponseLogger {
     private final Producer<String, String> producer;
 
     public EventLogger(Configuration configuration) {
@@ -36,8 +36,9 @@ public class EventLogger {
         properties.put(key, configuration.getString(key));
     }
 
-    public void sendMessage(String requestId, String event) {
-        final ProducerRecord<String, String> data = new ProducerRecord<>("serving", requestId, event);
+    @Override
+    public void sendMessage(String requestId, String event, String topic) {
+        final ProducerRecord<String, String> data = new ProducerRecord<>(topic, requestId, event);
         producer.send(data, (metadata, exception) -> {
             // TODO : spool locally
             if (exception != null) {

@@ -29,8 +29,10 @@ public class App {
 
     private void run() throws Exception {
         Server server = new Server(port);
+
         Injector configInjector = Guice.createInjector(new ConfigModule(this.configFilePath));
         Configuration config = configInjector.getInstance(Configuration.class);
+
         Injector injector = Guice.createInjector(new CacheModule(config), new ProcessingModule(config));
         V1EntryPoint v1EntryPoint = injector.getInstance(V1EntryPoint.class);
 
