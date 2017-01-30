@@ -1,16 +1,17 @@
 package com.chymeravr.serving.processing.adfetcher;
 
-import com.chymeravr.serving.processing.rqhandler.entities.request.Request;
-import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import com.chymeravr.serving.cache.ad.AdCache;
 import com.chymeravr.serving.cache.ad.AdEntity;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
 import com.chymeravr.serving.cache.adgroup.AdgroupEntity;
+import com.chymeravr.serving.processing.rqhandler.entities.request.Request;
+import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import com.chymeravr.serving.thrift.ImpressionInfo;
 import com.chymeravr.serving.thrift.Placement;
 import lombok.Data;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by rubbal on 19/1/17.
@@ -26,9 +27,17 @@ public class AdFetcher {
         int hmdId = adRequest.getHmdId();
         ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmd(hmdId));
 
-        adgroupsForHmd.sort(Comparator.comparingDouble(x -> -x.getBid())); // reverse sort
+        List<AdgroupEntity> adgroupsWithBudget = adgroupsForHmd.stream().filter(x ->
+                x.getTodayBurn() < x.getDailyBudget() &&
+                        x.getTotalBurn() < x.getTotalBudget() &&
+                        x.getCmpTodayBurn() < x.getCmpDailyBudget() &&
+                        x.getCmpTotalBurn() < x.getCmpTotalBudget()
 
-        List<ImpressionInfo> topAds = getTopAds(adgroupsForHmd, placements.size());
+        ).collect(Collectors.toList());
+
+        adgroupsWithBudget.sort(Comparator.comparingDouble(x -> -x.getBid())); // reverse sort
+
+        List<ImpressionInfo> topAds = getTopAds(adgroupsWithBudget, placements.size());
         // Assign ads to a placement
         Map<String, ImpressionInfo> adsMap = new HashMap<>();
         for (int i = 0; i < topAds.size(); i++) { // At most as many top Ads as placements
@@ -37,7 +46,7 @@ public class AdFetcher {
         return new InternalAdResponse(200, "OK", expIds, adsMap);
     }
 
-    private List<ImpressionInfo> getTopAds(ArrayList<AdgroupEntity> adgroupsForHmd, int adsToSelect) {
+    private List<ImpressionInfo> getTopAds(List<AdgroupEntity> adgroupsForHmd, int adsToSelect) {
         List<ImpressionInfo> ads = new ArrayList<>();
         int adsSelected = 0;
 

@@ -1,9 +1,9 @@
 package com.chymeravr.serving.cache.adgroup;
 
-import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.CacheName;
-import com.chymeravr.serving.enums.Pricing;
+import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
+import com.chymeravr.serving.enums.Pricing;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
 import org.jooq.*;
@@ -114,9 +114,27 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
 
     public Set<AdgroupEntity> getAdgroupsForHmd(int hmdId) {
         Set<AdgroupEntity> adgroupEntities = hmdMapping.get(hmdId);
-        if (adgroupEntities == null) {
+        Set<AdgroupEntity> untargetedAdgroups = hmdMapping.get(null);
+
+        // If both empty
+        if (adgroupEntities == null && untargetedAdgroups == null) {
             return Collections.emptySet();
         }
-        return adgroupEntities;
+
+        // Guaranteed that one of them is non-null. Create new objects to avoid leaking references.
+        // TODO: Return immutable sets
+        if (adgroupEntities == null) {
+            return new HashSet<>(untargetedAdgroups);
+        }
+
+        if (untargetedAdgroups == null) {
+            return new HashSet<>(adgroupEntities);
+        }
+
+        // If both of them are non-null, create a new set and add them both
+        Set<AdgroupEntity> validAdgroups = new HashSet<>();
+        validAdgroups.addAll(untargetedAdgroups);
+        validAdgroups.addAll(adgroupEntities);
+        return validAdgroups;
     }
 }
