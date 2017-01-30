@@ -13,7 +13,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 
 import javax.sql.DataSource;
 
@@ -25,8 +24,8 @@ public class CacheModule extends AbstractModule {
     private final int defaultRefreshTimeSeconds;
     private final Configuration configuration;
 
-    public CacheModule(String configFilePath) throws ConfigurationException {
-        this.configuration = new PropertiesConfiguration(configFilePath);
+    public CacheModule(Configuration configuration) throws ConfigurationException {
+        this.configuration = configuration;
         this.defaultRefreshTimeSeconds = configuration.getInt("defaultRefreshTimeSeconds");
     }
 
