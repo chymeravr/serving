@@ -26,6 +26,8 @@ public class ConfigModule extends AbstractModule {
     @Provides
     @Singleton
     Configuration providesConfiguration() throws ConfigurationException {
-        return new PropertiesConfiguration(filePath);
+        PropertiesConfiguration config = new PropertiesConfiguration(filePath);
+        config.setThrowExceptionOnMissing(true);
+        return config;
     }
 }
