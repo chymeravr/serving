@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class AdFetcher {
     private final AdgroupCache adgroupCache;
     private final AdCache adCache;
-    private static final String CREATIVE_URL_PREFIX = "https://chymcreative.blob.core.windows.net/creatives/";
+    private static final String CREATIVE_URL_PREFIX = "https://chymerastatic.blob.core.windows.net/creatives/";
 
     public InternalAdResponse getAdResponse(Request adRequest, List<Integer> expIds) {
         List<Placement> placements = adRequest.getPlacements();
