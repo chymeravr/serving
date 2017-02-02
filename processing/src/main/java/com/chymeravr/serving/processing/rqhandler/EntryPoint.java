@@ -1,14 +1,16 @@
-package com.chymeravr.serving.processing.rqhandler.iface;
+package com.chymeravr.serving.processing.rqhandler;
 
+import com.chymeravr.schemas.serving.ImpressionInfo;
+import com.chymeravr.schemas.serving.RequestInfo;
+import com.chymeravr.schemas.serving.ResponseCode;
+import com.chymeravr.schemas.serving.ServingLog;
 import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
 import com.chymeravr.serving.processing.rqhandler.entities.request.Request;
 import com.chymeravr.serving.processing.rqhandler.entities.response.AdResponse;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
-import com.chymeravr.serving.thrift.ImpressionInfo;
-import com.chymeravr.serving.thrift.RequestInfo;
-import com.chymeravr.serving.thrift.ResponseCode;
-import com.chymeravr.serving.thrift.ServingLog;
+import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
+import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TSerializer;

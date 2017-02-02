@@ -2,7 +2,6 @@ package com.chymeravr.serving.processing.rqhandler;
 
 import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
-import com.chymeravr.serving.processing.rqhandler.iface.EntryPoint;
 import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
 import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
 

@@ -1,6 +1,6 @@
 package com.chymeravr.serving.processing.rqhandler.entities.response;
 
-import com.chymeravr.serving.thrift.ImpressionInfo;
+import com.chymeravr.schemas.serving.ImpressionInfo;
 import lombok.Data;
 
 import java.util.List;
