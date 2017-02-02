@@ -38,7 +38,6 @@
 
     <modules>
         <module>server</module>
-        <module>thrift</module>
         <module>assembly</module>
         <module>database</module>
         <module>cache</module>

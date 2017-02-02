@@ -12,7 +12,6 @@ import com.chymeravr.serving.thrift.ServingLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TJSONProtocol;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import javax.servlet.ServletException;
@@ -77,7 +76,7 @@ public abstract class EntryPoint extends AbstractHandler {
                     impressionInfo);
             try {
                 responseLogger.sendMessage(impressionInfo.getServingId(),
-                        encode(new TSerializer(TJSONProtocol::new).serialize(servingLog)),
+                        encode(new TSerializer().serialize(servingLog)),
                         downStreamTopicName);
             } catch (Exception e) {
                 log.error("Unable to send kafka message");
