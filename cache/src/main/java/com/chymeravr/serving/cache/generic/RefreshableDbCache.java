@@ -8,6 +8,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by rubbal on 16/1/17.
  */
+@Slf4j
 public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService {
     private final Counter updatesAttemped;
     private final Counter updatesSucceeded;
@@ -79,6 +81,7 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
             this.updatesSucceeded.inc();
         } catch (Exception e) {
             this.updatesFailed.inc();
+            log.error("Unable to refresh repo", e);
             throw new RuntimeException(e);
         }
     }

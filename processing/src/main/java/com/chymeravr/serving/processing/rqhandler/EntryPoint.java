@@ -81,7 +81,7 @@ public abstract class EntryPoint extends AbstractHandler {
                         encode(new TSerializer().serialize(servingLog)),
                         downStreamTopicName);
             } catch (Exception e) {
-                log.error("Unable to send kafka message");
+                log.error("Unable to send kafka message", e);
             }
         });
     }
