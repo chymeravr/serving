@@ -1,11 +1,12 @@
 package com.chymeravr.serving.cache.ad;
 
+import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
-import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.dao.Tables;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
@@ -16,6 +17,7 @@ import java.util.*;
 /**
  * Created by rubbal on 12/1/17.
  */
+@Slf4j
 public class AdCache extends RefreshableDbCache<String, AdEntity> {
     public AdCache(CacheName name,
                    DataSource connectionPool,
@@ -26,6 +28,7 @@ public class AdCache extends RefreshableDbCache<String, AdEntity> {
     }
 
     private ImmutableMap<String, Set<AdEntity>> adsForAdgroup;
+
     public ImmutableMap<String, AdEntity> load(Connection connection, Map<String, AdEntity> currentEntities) {
         ImmutableMap.Builder<String, AdEntity> mapBuilder = ImmutableMap.builder();
         Map<String, Set<AdEntity>> newAdsForAdgroup = new HashMap<>();
@@ -71,6 +74,7 @@ public class AdCache extends RefreshableDbCache<String, AdEntity> {
             this.adsForAdgroup = ImmutableMap.copyOf(newAdsForAdgroup);
             return mapBuilder.build();
         } catch (Exception e) {
+            log.error("Unable to refresh repo", e);
             throw new RuntimeException(e);
         }
     }

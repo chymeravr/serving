@@ -48,9 +48,9 @@
             <version>2.8.0</version>
         </dependency>
         <dependency>
-            <groupId>com.chymeravr.serving</groupId>
-            <artifactId>thrift</artifactId>
-            <version>${project.parent.version}</version>
+            <groupId>com.chymeravr.schemas</groupId>
+            <artifactId>schemas</artifactId>
+            <version>0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.chymeravr.serving</groupId>

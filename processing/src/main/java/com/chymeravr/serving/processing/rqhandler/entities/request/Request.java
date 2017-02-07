@@ -1,6 +1,6 @@
 package com.chymeravr.serving.processing.rqhandler.entities.request;
 
-import com.chymeravr.serving.thrift.Placement;
+import com.chymeravr.schemas.serving.Placement;
 import lombok.Data;
 
 import java.util.List;

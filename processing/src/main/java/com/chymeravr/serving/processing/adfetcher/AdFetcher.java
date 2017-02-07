@@ -1,13 +1,13 @@
 package com.chymeravr.serving.processing.adfetcher;
 
+import com.chymeravr.schemas.serving.ImpressionInfo;
+import com.chymeravr.schemas.serving.Placement;
 import com.chymeravr.serving.cache.ad.AdCache;
 import com.chymeravr.serving.cache.ad.AdEntity;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
 import com.chymeravr.serving.cache.adgroup.AdgroupEntity;
 import com.chymeravr.serving.processing.rqhandler.entities.request.Request;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
-import com.chymeravr.serving.thrift.ImpressionInfo;
-import com.chymeravr.serving.thrift.Placement;
 import lombok.Data;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class AdFetcher {
     private final AdgroupCache adgroupCache;
     private final AdCache adCache;
-    private static final String CREATIVE_URL_PREFIX = "https://chymcreative.blob.core.windows.net/creatives/";
+    private static final String CREATIVE_URL_PREFIX = "https://chymerastatic.blob.core.windows.net/creatives/";
 
     public InternalAdResponse getAdResponse(Request adRequest, List<Integer> expIds) {
         List<Placement> placements = adRequest.getPlacements();
