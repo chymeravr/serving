@@ -4,6 +4,7 @@ import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
 import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
 import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
+import com.codahale.metrics.MetricRegistry;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,8 +15,9 @@ public class V1EntryPoint extends EntryPoint {
                         ResponseSerializer serializer,
                         AdFetcher adFetcher,
                         ResponseLogger responseLogger,
-                        String kafkaTopicName) {
-        super(deserializer, serializer, adFetcher, responseLogger, kafkaTopicName);
+                        String kafkaTopicName,
+                        MetricRegistry metricRegistry) {
+        super(deserializer, serializer, adFetcher, responseLogger, kafkaTopicName, metricRegistry);
     }
 
     public void setReponseHeaders(HttpServletResponse response) {

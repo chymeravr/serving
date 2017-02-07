@@ -43,7 +43,9 @@ public class CacheModule extends AbstractModule {
     @Provides
     @Singleton
     MetricRegistry providesMetricRegistry() {
-        return new MetricRegistry();
+        MetricRegistry metricRegistry = new MetricRegistry();
+
+        return metricRegistry;
     }
 
     @Provides

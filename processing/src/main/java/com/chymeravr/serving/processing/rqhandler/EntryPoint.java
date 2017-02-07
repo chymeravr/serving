@@ -11,7 +11,8 @@ import com.chymeravr.serving.processing.rqhandler.entities.response.AdResponse;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
 import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
-import lombok.RequiredArgsConstructor;
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TSerializer;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -30,7 +31,6 @@ import java.util.UUID;
  * Created by rubbal on 19/1/17.
  */
 
-@RequiredArgsConstructor
 @Slf4j
 public abstract class EntryPoint extends AbstractHandler {
 
@@ -39,11 +39,32 @@ public abstract class EntryPoint extends AbstractHandler {
     private final AdFetcher adFetcher;
     private final ResponseLogger responseLogger;
     private final String downStreamTopicName;
+    private final MetricRegistry metricRegistry;
+    private final Counter requestsReceived;
+    private final Counter requestsResponded;
+
+    protected EntryPoint(RequestDeserializer deserializer,
+                         ResponseSerializer serializer,
+                         AdFetcher adFetcher,
+                         ResponseLogger responseLogger,
+                         String downStreamTopicName,
+                         MetricRegistry metricRegistry) {
+        this.deserializer = deserializer;
+        this.serializer = serializer;
+        this.adFetcher = adFetcher;
+        this.responseLogger = responseLogger;
+        this.downStreamTopicName = downStreamTopicName;
+        this.metricRegistry = metricRegistry;
+
+        requestsReceived = metricRegistry.counter("App.requestsReceived");
+        requestsResponded = metricRegistry.counter("App.requestsResponded");
+    }
 
     public void handle(String target,
                        org.eclipse.jetty.server.Request baseRequest,
                        HttpServletRequest request,
                        HttpServletResponse response) throws IOException, ServletException {
+        requestsReceived.inc();
         final UUID requestId = UUID.randomUUID();
         List<Integer> experiments = new ArrayList<>();
         Request adRequest = deserializer.deserializeRequest(request);
@@ -84,6 +105,7 @@ public abstract class EntryPoint extends AbstractHandler {
                 log.error("Unable to send kafka message", e);
             }
         });
+        requestsResponded.inc();
     }
 
     private String encode(byte[] binaryData) {

@@ -6,6 +6,8 @@ import com.chymeravr.serving.processing.rqhandler.V1EntryPoint;
 import com.chymeravr.serving.server.guice.CacheModule;
 import com.chymeravr.serving.server.guice.ConfigModule;
 import com.chymeravr.serving.server.guice.ProcessingModule;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.servlets.MetricsServlet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.commons.configuration.Configuration;
@@ -13,6 +15,8 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 public class App {
     @Parameter(names = {"--config", "-c"}, description = "config file", required = true)
@@ -40,8 +44,13 @@ public class App {
         context.setContextPath("/api/v1/ads/");
         context.setHandler(v1EntryPoint);
 
+        MetricsServlet metricsServlet = new MetricsServlet(injector.getInstance(MetricRegistry.class));
+        ServletHolder metricsServletHolder = new ServletHolder(metricsServlet);
+        ServletContextHandler metricsServletHandler = new ServletContextHandler(server, "/health/");
+        metricsServletHandler.addServlet(metricsServletHolder, "/metrics/");
+
         ContextHandlerCollection contexts = new ContextHandlerCollection();
-        contexts.setHandlers(new Handler[]{context});
+        contexts.setHandlers(new Handler[]{context, metricsServletHandler});
 
         server.setHandler(contexts);
 

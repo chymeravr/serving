@@ -53,9 +53,9 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
         this.lastSuccessfulUpdateTime = 0;
 
         // Metrics
-        this.updatesAttemped = metricRegistry.counter("updatesAttempted");
-        this.updatesSucceeded = metricRegistry.counter("updatesSucceeded");
-        this.updatesFailed = metricRegistry.counter("updatesFailed");
+        this.updatesAttemped = metricRegistry.counter(getMetricName("updatesAttempted"));
+        this.updatesSucceeded = metricRegistry.counter(getMetricName("updatesSucceeded"));
+        this.updatesFailed = metricRegistry.counter(getMetricName("updatesFailed"));
 
         metricRegistry.register(getMetricName("entityCount"), (Gauge<Integer>) () -> entities.size());
         metricRegistry.register(getMetricName("lastAttemptedUpdate"), (Gauge<Long>) () -> this.lastAttemptedUpdateTime);
@@ -78,6 +78,7 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
             this.updatesAttemped.inc();
             this.lastAttemptedUpdateTime = this.clock.currentTimeMillis();
             this.entities = load(connection, this.entities);
+            this.lastSuccessfulUpdateTime = this.lastAttemptedUpdateTime;
             this.updatesSucceeded.inc();
         } catch (Exception e) {
             this.updatesFailed.inc();

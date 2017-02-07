@@ -10,6 +10,7 @@ import com.chymeravr.serving.processing.rqhandler.entities.v1.json.V1RequestDese
 import com.chymeravr.serving.processing.rqhandler.entities.v1.json.V1ResponseSerializer;
 import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
 import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
+import com.codahale.metrics.MetricRegistry;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -58,12 +59,14 @@ public class ProcessingModule extends AbstractModule {
     V1EntryPoint providesV1EntryPoint(RequestDeserializer deserializer,
                                       ResponseSerializer serializer,
                                       AdFetcher adFetcher,
-                                      ResponseLogger responseLogger) {
+                                      ResponseLogger responseLogger,
+                                      MetricRegistry metricRegistry) {
         return new V1EntryPoint(deserializer,
                 serializer,
                 adFetcher,
                 responseLogger,
-                configuration.getString("kafkaTopicName")
+                configuration.getString("kafkaTopicName"),
+                metricRegistry
         );
     }
 }
