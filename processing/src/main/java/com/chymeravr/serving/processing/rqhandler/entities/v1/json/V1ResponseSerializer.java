@@ -1,6 +1,6 @@
 package com.chymeravr.serving.processing.rqhandler.entities.v1.json;
 
-import com.chymeravr.serving.processing.rqhandler.entities.response.AdResponse;
+import com.chymeravr.schemas.serving.ServingResponse;
 import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
 import com.google.gson.Gson;
 
@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 public class V1ResponseSerializer implements ResponseSerializer {
 
     @Override
-    public byte[] serialize(AdResponse response) {
+    public byte[] serialize(ServingResponse response) {
         return new Gson().toJson(response).getBytes();
     }
 }

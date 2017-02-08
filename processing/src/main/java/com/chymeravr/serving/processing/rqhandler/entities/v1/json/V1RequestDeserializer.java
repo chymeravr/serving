@@ -1,7 +1,7 @@
 package com.chymeravr.serving.processing.rqhandler.entities.v1.json;
 
+import com.chymeravr.schemas.serving.ServingRequest;
 import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
-import com.chymeravr.serving.processing.rqhandler.entities.request.Request;
 import com.google.gson.Gson;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class V1RequestDeserializer implements RequestDeserializer {
 
     @Override
-    public Request deserializeRequest(HttpServletRequest request) throws IOException {
+    public ServingRequest deserializeRequest(HttpServletRequest request) throws IOException {
         StringBuilder buffer = new StringBuilder();
         BufferedReader reader = request.getReader();
         String line;
@@ -22,6 +22,6 @@ public class V1RequestDeserializer implements RequestDeserializer {
             buffer.append(line);
         }
         String data = buffer.toString();
-        return new Gson().fromJson(data, Request.class);
+        return new Gson().fromJson(data, ServingRequest.class);
     }
 }

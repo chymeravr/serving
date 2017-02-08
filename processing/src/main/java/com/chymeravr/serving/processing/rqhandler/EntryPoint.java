@@ -1,13 +1,8 @@
 package com.chymeravr.serving.processing.rqhandler;
 
-import com.chymeravr.schemas.serving.ImpressionInfo;
-import com.chymeravr.schemas.serving.RequestInfo;
-import com.chymeravr.schemas.serving.ResponseCode;
-import com.chymeravr.schemas.serving.ServingLog;
+import com.chymeravr.schemas.serving.*;
 import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
-import com.chymeravr.serving.processing.rqhandler.entities.request.Request;
-import com.chymeravr.serving.processing.rqhandler.entities.response.AdResponse;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
 import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
@@ -67,9 +62,9 @@ public abstract class EntryPoint extends AbstractHandler {
         requestsReceived.inc();
         final UUID requestId = UUID.randomUUID();
         List<Integer> experiments = new ArrayList<>();
-        Request adRequest = deserializer.deserializeRequest(request);
+        ServingRequest adRequest = deserializer.deserializeRequest(request);
         InternalAdResponse internalAdResponse = adFetcher.getAdResponse(adRequest, experiments);
-        AdResponse adResponse = new AdResponse(internalAdResponse);
+        ServingResponse adResponse = internalAdResponse.getServingResponse();
         setReponseHeaders(response);
         PrintWriter out = response.getWriter();
         out.write(new String(serializer.serialize(adResponse)));
@@ -82,7 +77,7 @@ public abstract class EntryPoint extends AbstractHandler {
                 adRequest.getHmdId(),
                 adRequest.getOsId(),
                 adRequest.getOsVersion(),
-                adRequest.getDeviceInfo().getManufacturer());
+                adRequest.getDevice().getManufacturer());
 
 
         internalAdResponse.getAds().entrySet().forEach(placementImpression -> {

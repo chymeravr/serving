@@ -2,11 +2,12 @@ package com.chymeravr.serving.processing.adfetcher;
 
 import com.chymeravr.schemas.serving.ImpressionInfo;
 import com.chymeravr.schemas.serving.Placement;
+import com.chymeravr.schemas.serving.ResponseCode;
+import com.chymeravr.schemas.serving.ServingRequest;
 import com.chymeravr.serving.cache.ad.AdCache;
 import com.chymeravr.serving.cache.ad.AdEntity;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
 import com.chymeravr.serving.cache.adgroup.AdgroupEntity;
-import com.chymeravr.serving.processing.rqhandler.entities.request.Request;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import lombok.Data;
 
@@ -22,7 +23,7 @@ public class AdFetcher {
     private final AdCache adCache;
     private static final String CREATIVE_URL_PREFIX = "https://chymerastatic.blob.core.windows.net/creatives/";
 
-    public InternalAdResponse getAdResponse(Request adRequest, List<Integer> expIds) {
+    public InternalAdResponse getAdResponse(ServingRequest adRequest, List<Integer> expIds) {
         List<Placement> placements = adRequest.getPlacements();
         int hmdId = adRequest.getHmdId();
         ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmd(hmdId));
@@ -43,7 +44,7 @@ public class AdFetcher {
         for (int i = 0; i < topAds.size(); i++) { // At most as many top Ads as placements
             adsMap.put(placements.get(i).getId(), topAds.get(i));
         }
-        return new InternalAdResponse(200, "OK", expIds, adsMap);
+        return new InternalAdResponse(adsMap.size() > 0 ? ResponseCode.SERVED : ResponseCode.NO_AD, "OK", expIds, adsMap);
     }
 
     private List<ImpressionInfo> getTopAds(List<AdgroupEntity> adgroupsForHmd, int adsToSelect) {
