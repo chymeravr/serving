@@ -1,4 +1,4 @@
-package com.chymeravr;
+package com.chymeravr.serving;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
