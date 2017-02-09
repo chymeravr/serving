@@ -2,7 +2,8 @@ package com.chymeravr.serving.processing.rqhandler.entities.v1.json;
 
 import com.chymeravr.schemas.serving.ServingRequest;
 import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -22,6 +23,8 @@ public class V1RequestDeserializer implements RequestDeserializer {
             buffer.append(line);
         }
         String data = buffer.toString();
-        return new Gson().fromJson(data, ServingRequest.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return objectMapper.readValue(data, ServingRequest.class);
     }
 }
