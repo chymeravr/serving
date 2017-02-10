@@ -4,6 +4,7 @@ import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
 import com.chymeravr.serving.dao.Tables;
+import com.chymeravr.serving.dbconnector.ConnectionFactory;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +21,11 @@ import java.util.*;
 @Slf4j
 public class AdCache extends RefreshableDbCache<String, AdEntity> {
     public AdCache(CacheName name,
-                   DataSource connectionPool,
+                   ConnectionFactory connectionFactory,
                    MetricRegistry metricRegistry,
                    int refreshTimeSeconds,
                    Clock clock) throws Exception {
-        super(name, connectionPool, metricRegistry, refreshTimeSeconds, clock);
+        super(name, connectionFactory, metricRegistry, refreshTimeSeconds, clock);
     }
 
     private ImmutableMap<String, Set<AdEntity>> adsForAdgroup;

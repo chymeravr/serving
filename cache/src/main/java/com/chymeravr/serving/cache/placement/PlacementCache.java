@@ -3,13 +3,13 @@ package com.chymeravr.serving.cache.placement;
 import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
+import com.chymeravr.serving.dbconnector.ConnectionFactory;
 import com.chymeravr.serving.enums.AppStore;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Map;
 import java.util.UUID;
@@ -24,11 +24,11 @@ import static com.chymeravr.serving.dao.tables.PublisherPlacement.PUBLISHER_PLAC
  */
 public class PlacementCache extends RefreshableDbCache<String, PlacementEntity> {
     public PlacementCache(CacheName name,
-                          DataSource connectionPool,
+                          ConnectionFactory connectionFactory,
                           MetricRegistry metricRegistry,
                           int refreshTimeSeconds,
                           Clock clock) throws Exception {
-        super(name, connectionPool, metricRegistry, refreshTimeSeconds, clock);
+        super(name, connectionFactory, metricRegistry, refreshTimeSeconds, clock);
     }
 
     @Override

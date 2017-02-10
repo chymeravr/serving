@@ -3,6 +3,7 @@ package com.chymeravr.serving.cache.adgroup;
 import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
+import com.chymeravr.serving.dbconnector.ConnectionFactory;
 import com.chymeravr.serving.enums.Pricing;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
@@ -10,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.*;
@@ -23,11 +23,11 @@ import static com.chymeravr.serving.dao.Tables.*;
 @Slf4j
 public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
     public AdgroupCache(CacheName name,
-                        DataSource connectionPool,
+                        ConnectionFactory connectionFactory,
                         MetricRegistry metricRegistry,
                         int refreshTimeSeconds,
                         Clock clock) throws Exception {
-        super(name, connectionPool, metricRegistry, refreshTimeSeconds, clock);
+        super(name, connectionFactory, metricRegistry, refreshTimeSeconds, clock);
     }
 
     private ImmutableMap<Integer, Set<AdgroupEntity>> hmdMapping;
@@ -115,6 +115,7 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
             this.hmdMapping = ImmutableMap.copyOf(newHmdMappings);
             return mapBuilder.build();
         } catch (Exception e) {
+            log.error("Unable to refresh repo", e);
             throw new RuntimeException(e);
         }
     }

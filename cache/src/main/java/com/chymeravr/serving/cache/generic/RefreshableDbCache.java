@@ -2,6 +2,7 @@ package com.chymeravr.serving.cache.generic;
 
 import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.utils.Clock;
+import com.chymeravr.serving.dbconnector.ConnectionFactory;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
@@ -10,7 +11,6 @@ import com.google.common.util.concurrent.AbstractScheduledService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,18 +32,18 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
 
     // Immutable state
     private final CacheName cacheName;
-    private final DataSource connectionPool;
+    private final ConnectionFactory connectionFactory;
     private final int refreshTimeSeconds;
     private final Clock clock;
 
     public RefreshableDbCache(CacheName name,
-                              DataSource connectionPool,
+                              ConnectionFactory connectionFactory,
                               MetricRegistry metricRegistry,
                               int refreshTimeSeconds,
                               Clock clock) throws Exception {
         // Immutable state
         this.cacheName = name;
-        this.connectionPool = connectionPool;
+        this.connectionFactory = connectionFactory;
         this.refreshTimeSeconds = refreshTimeSeconds;
         this.clock = clock;
 
@@ -74,7 +74,7 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
 
     @Override
     protected void runOneIteration() throws Exception {
-        try (Connection connection = this.connectionPool.getConnection()) {
+        try (Connection connection = this.connectionFactory.getConnection()) {
             this.updatesAttemped.inc();
             this.lastAttemptedUpdateTime = this.clock.currentTimeMillis();
             this.entities = load(connection, this.entities);
@@ -82,7 +82,6 @@ public abstract class RefreshableDbCache<K, V> extends AbstractScheduledService 
             this.updatesSucceeded.inc();
         } catch (Exception e) {
             this.updatesFailed.inc();
-            log.error("Unable to refresh repo", e);
             throw new RuntimeException(e);
         }
     }

@@ -5,16 +5,17 @@ import com.chymeravr.serving.cache.ad.AdCache;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
 import com.chymeravr.serving.cache.placement.PlacementCache;
 import com.chymeravr.serving.cache.utils.Clock;
+import com.chymeravr.serving.dbconnector.ConnectionFactory;
+import com.chymeravr.serving.dbconnector.PsqlUnpooledConnectionFactory;
 import com.codahale.metrics.MetricRegistry;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
-import javax.sql.DataSource;
+import java.sql.SQLException;
 
 /**
  * Created by rubbal on 16/1/17.
@@ -35,17 +36,22 @@ public class CacheModule extends AbstractModule {
 
     @Provides
     @Singleton
-    DataSource providesDataSource() {
-        HikariConfig config = new HikariConfig(configuration.getString("jdbcConfigFile"));
-        return new HikariDataSource(config);
+    ConnectionFactory providesDataSource() throws ConfigurationException, SQLException, ClassNotFoundException {
+        String jdbcConfigFile = configuration.getString("jdbcConfigFile");
+        PropertiesConfiguration jdbcConfig = new PropertiesConfiguration(jdbcConfigFile);
+        jdbcConfig.setThrowExceptionOnMissing(true);
+        return new PsqlUnpooledConnectionFactory(jdbcConfig.getString("serverName"),
+                jdbcConfig.getInt("portNumber"),
+                jdbcConfig.getString("databaseName"),
+                jdbcConfig.getString("user"),
+                jdbcConfig.getString("password")
+        );
     }
 
     @Provides
     @Singleton
     MetricRegistry providesMetricRegistry() {
-        MetricRegistry metricRegistry = new MetricRegistry();
-
-        return metricRegistry;
+        return new MetricRegistry();
     }
 
     @Provides
@@ -60,26 +66,26 @@ public class CacheModule extends AbstractModule {
 
     @Provides
     @Singleton
-    AdgroupCache providesAdgroupCache(DataSource dataSource,
+    AdgroupCache providesAdgroupCache(ConnectionFactory connectionFactory,
                                       MetricRegistry metricRegistry,
                                       Clock clock) throws Exception {
-        return new AdgroupCache(CacheName.AdgroupCache, dataSource, metricRegistry, defaultRefreshTimeSeconds, clock);
+        return new AdgroupCache(CacheName.AdgroupCache, connectionFactory, metricRegistry, defaultRefreshTimeSeconds, clock);
     }
 
     @Provides
     @Singleton
-    PlacementCache providesPlacementCache(DataSource dataSource,
+    PlacementCache providesPlacementCache(ConnectionFactory connectionFactory,
                                           MetricRegistry metricRegistry,
                                           Clock clock) throws Exception {
-        return new PlacementCache(CacheName.PlacementCache, dataSource, metricRegistry, defaultRefreshTimeSeconds, clock);
+        return new PlacementCache(CacheName.PlacementCache, connectionFactory, metricRegistry, defaultRefreshTimeSeconds, clock);
     }
 
     @Provides
     @Singleton
-    AdCache providesAdCache(DataSource dataSource,
+    AdCache providesAdCache(ConnectionFactory connectionFactory,
                             MetricRegistry metricRegistry,
                             Clock clock) throws Exception {
-        return new AdCache(CacheName.AdCache, dataSource, metricRegistry, defaultRefreshTimeSeconds, clock);
+        return new AdCache(CacheName.AdCache, connectionFactory, metricRegistry, defaultRefreshTimeSeconds, clock);
     }
 
 
