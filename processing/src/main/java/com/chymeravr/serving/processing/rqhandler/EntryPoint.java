@@ -34,7 +34,6 @@ public abstract class EntryPoint extends AbstractHandler {
     private final AdFetcher adFetcher;
     private final ResponseLogger responseLogger;
     private final String downStreamTopicName;
-    private final MetricRegistry metricRegistry;
     private final Counter requestsReceived;
     private final Counter requestsResponded;
 
@@ -49,7 +48,6 @@ public abstract class EntryPoint extends AbstractHandler {
         this.adFetcher = adFetcher;
         this.responseLogger = responseLogger;
         this.downStreamTopicName = downStreamTopicName;
-        this.metricRegistry = metricRegistry;
 
         requestsReceived = metricRegistry.counter("App.requestsReceived");
         requestsResponded = metricRegistry.counter("App.requestsResponded");

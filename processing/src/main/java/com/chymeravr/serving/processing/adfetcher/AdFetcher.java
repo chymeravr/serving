@@ -63,7 +63,8 @@ public class AdFetcher {
                         ad.getId(),
                         adgroupEntity.getBid(),
                         adgroupEntity.getBid() * 0.6,
-                        CREATIVE_URL_PREFIX + ad.getUrl());
+                        CREATIVE_URL_PREFIX + ad.getUrl(),
+                        adgroupEntity.getPricingModel());
                 ads.add(impressionInfo);
                 adsSelected++;
             }

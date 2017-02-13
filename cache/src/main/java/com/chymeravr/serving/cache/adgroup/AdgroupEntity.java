@@ -1,6 +1,6 @@
 package com.chymeravr.serving.cache.adgroup;
 
-import com.chymeravr.serving.enums.Pricing;
+import com.chymeravr.schemas.serving.PricingModel;
 import lombok.*;
 
 /**
@@ -24,7 +24,7 @@ public class AdgroupEntity {
     private final double cmpTotalBurn;
     private final double cmpTodayBurn;
     @NonNull
-    private final Pricing pricingId;
+    private final PricingModel pricingModel;
     private final Integer hmdId;
     private final Integer osId;
     private final Integer minRam;

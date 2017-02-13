@@ -4,7 +4,7 @@ import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
-import com.chymeravr.serving.enums.Pricing;
+import com.chymeravr.serving.enums.PricingUtils;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
@@ -92,7 +92,7 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                     adgroupBuilder.cmpDailyBudget(record.get(ADVERTISER_CAMPAIGN.DAILYBUDGET));
                     adgroupBuilder.cmpTotalBurn(record.get(ADVERTISER_CAMPAIGN.TOTALBURN));
                     adgroupBuilder.cmpTodayBurn(record.get(ADVERTISER_CAMPAIGN.TODAYBURN));
-                    adgroupBuilder.pricingId(Pricing.getPricing(record.get(ADVERTISER_ADGROUP.PRICING_ID)));
+                    adgroupBuilder.pricingModel(PricingUtils.getPricing(record.get(ADVERTISER_ADGROUP.PRICING_ID)));
                     adgroupBuilder.osId(record.get(ADVERTISER_TARGETING.OS_ID));
                     adgroupBuilder.minRam(record.get(ADVERTISER_TARGETING.RAM));
                     adgroupBuilder.hmdId(hmdId);

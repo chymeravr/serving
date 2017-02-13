@@ -10,6 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>enums</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.chymeravr.schemas</groupId>
+            <artifactId>schemas</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

@@ -22,5 +22,10 @@
             <artifactId>enums</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.chymeravr.schemas</groupId>
+            <artifactId>schemas</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>
