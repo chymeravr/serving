@@ -8,6 +8,8 @@ import com.chymeravr.serving.cache.ad.AdCache;
 import com.chymeravr.serving.cache.ad.AdEntity;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
 import com.chymeravr.serving.cache.adgroup.AdgroupEntity;
+import com.chymeravr.serving.cache.placement.PlacementCache;
+import com.chymeravr.serving.cache.placement.PlacementEntity;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import lombok.Data;
 
@@ -21,30 +23,47 @@ import java.util.stream.Collectors;
 public class AdFetcher {
     private final AdgroupCache adgroupCache;
     private final AdCache adCache;
+    private final PlacementCache placementCache;
+
     private static final String CREATIVE_URL_PREFIX = "https://chymerastatic.blob.core.windows.net/creatives/";
 
     public InternalAdResponse getAdResponse(ServingRequest adRequest, List<Integer> expIds) {
         List<Placement> placements = adRequest.getPlacements();
-        int hmdId = adRequest.getHmdId();
-        ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmd(hmdId));
+        String appId = adRequest.getAppId();
 
-        List<AdgroupEntity> adgroupsWithBudget = adgroupsForHmd.stream().filter(x ->
-                x.getTodayBurn() < x.getDailyBudget() &&
-                        x.getTotalBurn() < x.getTotalBudget() &&
-                        x.getCmpTodayBurn() < x.getCmpDailyBudget() &&
-                        x.getCmpTotalBurn() < x.getCmpTotalBudget()
-
-        ).collect(Collectors.toList());
-
-        adgroupsWithBudget.sort(Comparator.comparingDouble(x -> -x.getBid())); // reverse sort
-
-        List<ImpressionInfo> topAds = getTopAds(adgroupsWithBudget, placements.size());
-        // Assign ads to a placement
-        Map<String, ImpressionInfo> adsMap = new HashMap<>();
-        for (int i = 0; i < topAds.size(); i++) { // At most as many top Ads as placements
-            adsMap.put(placements.get(i).getId(), topAds.get(i));
+        boolean isValidKey = true;
+        for (Placement placement : placements) {
+            PlacementEntity placementEntity = placementCache.getPlacementEntity(placement.getId());
+            if (placementEntity == null || !placementEntity.getAppId().equals(appId)) {
+                isValidKey = false;
+                break;
+            }
         }
-        return new InternalAdResponse(adsMap.size() > 0 ? ResponseCode.SERVED : ResponseCode.NO_AD, "OK", expIds, adsMap);
+
+        if (isValidKey) {
+            int hmdId = adRequest.getHmdId();
+            ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmd(hmdId));
+
+            List<AdgroupEntity> adgroupsWithBudget = adgroupsForHmd.stream().filter(x ->
+                    x.getTodayBurn() < x.getDailyBudget() &&
+                            x.getTotalBurn() < x.getTotalBudget() &&
+                            x.getCmpTodayBurn() < x.getCmpDailyBudget() &&
+                            x.getCmpTotalBurn() < x.getCmpTotalBudget()
+
+            ).collect(Collectors.toList());
+
+            adgroupsWithBudget.sort(Comparator.comparingDouble(x -> -x.getBid())); // reverse sort
+
+            List<ImpressionInfo> topAds = getTopAds(adgroupsWithBudget, placements.size());
+            // Assign ads to a placement
+            Map<String, ImpressionInfo> adsMap = new HashMap<>();
+            for (int i = 0; i < topAds.size(); i++) { // At most as many top Ads as placements
+                adsMap.put(placements.get(i).getId(), topAds.get(i));
+            }
+            return new InternalAdResponse(adsMap.size() > 0 ? ResponseCode.SERVED : ResponseCode.NO_AD, "OK", expIds, adsMap);
+        } else {
+            return new InternalAdResponse(ResponseCode.BAD_REQUEST, "Invalid app or placementId", expIds, new HashMap<>());
+        }
     }
 
     private List<ImpressionInfo> getTopAds(List<AdgroupEntity> adgroupsForHmd, int adsToSelect) {

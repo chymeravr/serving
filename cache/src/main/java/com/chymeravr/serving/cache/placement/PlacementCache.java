@@ -64,4 +64,8 @@ public class PlacementCache extends RefreshableDbCache<String, PlacementEntity> 
             throw new RuntimeException(e);
         }
     }
+
+    public PlacementEntity getPlacementEntity(String placementId) {
+        return this.getEntities().get(placementId);
+    }
 }

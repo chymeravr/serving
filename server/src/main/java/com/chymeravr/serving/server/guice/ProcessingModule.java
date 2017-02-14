@@ -2,6 +2,7 @@ package com.chymeravr.serving.server.guice;
 
 import com.chymeravr.serving.cache.ad.AdCache;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
+import com.chymeravr.serving.cache.placement.PlacementCache;
 import com.chymeravr.serving.logging.EventLogger;
 import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
@@ -30,8 +31,8 @@ public class ProcessingModule extends AbstractModule {
 
     @Provides
     @Singleton
-    AdFetcher providesAdFetcher(AdgroupCache adgroupCache, AdCache adCache) {
-        return new AdFetcher(adgroupCache, adCache);
+    AdFetcher providesAdFetcher(AdgroupCache adgroupCache, AdCache adCache, PlacementCache placementCache) {
+        return new AdFetcher(adgroupCache, adCache, placementCache);
     }
 
     @Provides
