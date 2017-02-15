@@ -11,6 +11,7 @@ import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TSerializer;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.slf4j.MDC;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -59,8 +60,10 @@ public abstract class EntryPoint extends AbstractHandler {
                        HttpServletResponse response) throws IOException, ServletException {
         requestsReceived.inc();
         final UUID requestId = UUID.randomUUID();
+        MDC.put("requestId", requestId.toString());
         List<Integer> experiments = new ArrayList<>();
         ServingRequest adRequest = deserializer.deserializeRequest(request);
+        log.info("Ad Request : {}", adRequest);
         InternalAdResponse internalAdResponse = adFetcher.getAdResponse(adRequest, experiments);
         ServingResponse adResponse = internalAdResponse.getServingResponse();
         setReponseHeaders(response);
@@ -98,6 +101,7 @@ public abstract class EntryPoint extends AbstractHandler {
                 log.error("Unable to send kafka message", e);
             }
         });
+        MDC.remove("requestId");
         requestsResponded.inc();
     }
 
