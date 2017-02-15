@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Tests run on modern PCs show that buffering related property -->
+        <!-- "ImmediateFlush" has negligible impact and will be ignored.  -->
+        <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+        <!--for further documentation-->
+        <File>/var/log/serving/serving.log</File>
+        <encoder>
+            <pattern>[%p] %d %c %M - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/var/log/serving/serving.log.%d{yyyy-MM-dd-HH}.zip</fileNamePattern>
+            <maxHistory>48</maxHistory>
+        </rollingPolicy>
+    </appender>
+    <appender name="debugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Tests run on modern PCs show that buffering related property -->
+        <!-- "ImmediateFlush" has negligible impact and will be ignored.  -->
+        <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+        <!--for further documentation-->
+        <File>/var/log/serving/debug.log</File>
+        <encoder>
+            <pattern>[%p] %d %c %M - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/var/log/serving/debug.log.%d{yyyy-MM-dd-HH}.zip</fileNamePattern>
+            <maxHistory>24</maxHistory>
+        </rollingPolicy>
+    </appender>
+    <root level="DEBUG">
+        <appender-ref ref="errorLog"/>
+    </root>
+</configuration>
