@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <turboFilter class="ch.qos.logback.classic.turbo.DynamicThresholdFilter">
+        <Key>chym_trace</Key>
+        <DefaultThreshold>ERROR</DefaultThreshold>
+        <MDCValueLevelPair>
+            <value>true</value>
+            <level>DEBUG</level>
+        </MDCValueLevelPair>
+    </turboFilter>
+
     <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
@@ -14,13 +23,6 @@
         </rollingPolicy>
     </appender>
     <appender name="debugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
-                <expression>return (((String)mdc.get("chym_trace")).equals("true"));</expression>
-            </evaluator>
-            <OnMismatch>DENY</OnMismatch>
-            <OnMatch>DENY</OnMatch>
-        </filter>
         <File>/var/log/serving/debug.log</File>
         <encoder>
             <pattern>[%p] %d %logger{5} %M %X{requestId} - %m%n</pattern>
