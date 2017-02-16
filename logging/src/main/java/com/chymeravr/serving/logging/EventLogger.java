@@ -16,6 +16,7 @@ import java.util.Properties;
  */
 @Slf4j
 public class EventLogger implements ResponseLogger {
+    public static final String KAFKA_REGISTRY = "kafka";
     private final Producer<String, String> producer;
 
     public EventLogger(Configuration configuration) {
@@ -27,7 +28,7 @@ public class EventLogger implements ResponseLogger {
         addToKafkaProps(props, ProducerConfig.ACKS_CONFIG, configuration);
 
         props.put(ProducerConfig.METRIC_REPORTER_CLASSES_CONFIG, DropwizardReporter.class.getCanonicalName());
-        props.put(DropwizardReporterConfig.REGISTRY_PROPERTY_NAME, "kafka");
+        props.put(DropwizardReporterConfig.REGISTRY_PROPERTY_NAME, KAFKA_REGISTRY);
 
         this.producer = new KafkaProducer<>(props);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

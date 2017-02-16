@@ -2,6 +2,7 @@ package com.chymeravr.serving.server;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.chymeravr.serving.logging.EventLogger;
 import com.chymeravr.serving.processing.rqhandler.V1EntryPoint;
 import com.chymeravr.serving.server.guice.CacheModule;
 import com.chymeravr.serving.server.guice.ConfigModule;
@@ -51,7 +52,8 @@ public class App {
         ServletHolder servletHolder = new ServletHolder(metricsServlet);
         metricsServletHandler.addServlet(servletHolder, "/metrics");
 
-        metricsServletHandler.addServlet(new ServletHolder(new MetricsServlet(SharedMetricRegistries.getOrCreate("kafka"))), "/kafka");
+        metricsServletHandler.addServlet(new ServletHolder(new MetricsServlet(SharedMetricRegistries.getOrCreate(EventLogger.KAFKA_REGISTRY))),
+                "/kafka");
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         contexts.setHandlers(new Handler[]{context, metricsServletHandler});
