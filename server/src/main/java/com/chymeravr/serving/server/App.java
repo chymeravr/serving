@@ -7,6 +7,7 @@ import com.chymeravr.serving.server.guice.CacheModule;
 import com.chymeravr.serving.server.guice.ConfigModule;
 import com.chymeravr.serving.server.guice.ProcessingModule;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -44,10 +45,13 @@ public class App {
         context.setContextPath("/api/v1/ads/");
         context.setHandler(v1EntryPoint);
 
-        MetricsServlet metricsServlet = new MetricsServlet(injector.getInstance(MetricRegistry.class));
-        ServletHolder metricsServletHolder = new ServletHolder(metricsServlet);
         ServletContextHandler metricsServletHandler = new ServletContextHandler(server, "/health/");
-        metricsServletHandler.addServlet(metricsServletHolder, "/metrics/");
+
+        MetricsServlet metricsServlet = new MetricsServlet(injector.getInstance(MetricRegistry.class));
+        ServletHolder servletHolder = new ServletHolder(metricsServlet);
+        metricsServletHandler.addServlet(servletHolder, "/metrics");
+
+        metricsServletHandler.addServlet(new ServletHolder(new MetricsServlet(SharedMetricRegistries.getOrCreate("kafka"))), "/kafka");
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         contexts.setHandlers(new Handler[]{context, metricsServletHandler});

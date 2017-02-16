@@ -1,5 +1,7 @@
 package com.chymeravr.serving.logging;
 
+import com.simple.metrics.kafka.DropwizardReporter;
+import com.simple.metrics.kafka.DropwizardReporterConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -23,6 +25,9 @@ public class EventLogger implements ResponseLogger {
         addToKafkaProps(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, configuration);
         addToKafkaProps(props, ProducerConfig.MAX_BLOCK_MS_CONFIG, configuration);
         addToKafkaProps(props, ProducerConfig.ACKS_CONFIG, configuration);
+
+        props.put(ProducerConfig.METRIC_REPORTER_CLASSES_CONFIG, DropwizardReporter.class.getCanonicalName());
+        props.put(DropwizardReporterConfig.REGISTRY_PROPERTY_NAME, "kafka");
 
         this.producer = new KafkaProducer<>(props);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
