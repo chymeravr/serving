@@ -9,10 +9,7 @@
         </MDCValueLevelPair>
     </turboFilter>
 
-    <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
+    <appender name="servingLogger" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>/var/log/serving/serving.log</File>
         <encoder>
             <pattern>[%p] %d %logger{5} %M %X{requestId} - %m%n</pattern>
@@ -22,19 +19,8 @@
             <maxHistory>48</maxHistory>
         </rollingPolicy>
     </appender>
-    <appender name="debugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>/var/log/serving/debug.log</File>
-        <encoder>
-            <pattern>[%p] %d %logger{5} %M %X{requestId} - %m%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/var/log/serving/debug.log.%d{yyyy-MM-dd-HH}.zip</fileNamePattern>
-            <maxHistory>24</maxHistory>
-        </rollingPolicy>
-    </appender>
 
     <root level="DEBUG">
-        <appender-ref ref="errorLog"/>
-        <appender-ref ref="debugLog"/>
+        <appender-ref ref="servingLogger"/>
     </root>
 </configuration>
