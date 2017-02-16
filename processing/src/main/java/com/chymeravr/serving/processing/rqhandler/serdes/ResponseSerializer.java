@@ -1,4 +1,4 @@
-package com.chymeravr.serving.processing.rqhandler.iface;
+package com.chymeravr.serving.processing.rqhandler.serdes;
 
 
 import com.chymeravr.schemas.serving.ServingResponse;

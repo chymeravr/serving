@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.*;
 

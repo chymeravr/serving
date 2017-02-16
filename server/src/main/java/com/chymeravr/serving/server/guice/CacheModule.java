@@ -13,7 +13,6 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 
 import java.sql.SQLException;
 
@@ -23,11 +22,13 @@ import java.sql.SQLException;
 public class CacheModule extends AbstractModule {
 
     private final int defaultRefreshTimeSeconds;
+    private final long dbConnectTimeoutMillis;
     private final Configuration configuration;
 
     public CacheModule(Configuration configuration) throws ConfigurationException {
         this.configuration = configuration;
         this.defaultRefreshTimeSeconds = configuration.getInt("defaultRefreshTimeSeconds");
+        this.dbConnectTimeoutMillis = configuration.getLong("dbConnectTimeoutMillis");
     }
 
     protected void configure() {
@@ -38,14 +39,7 @@ public class CacheModule extends AbstractModule {
     @Singleton
     ConnectionFactory providesDataSource() throws ConfigurationException, SQLException, ClassNotFoundException {
         String jdbcConfigFile = configuration.getString("jdbcConfigFile");
-        PropertiesConfiguration jdbcConfig = new PropertiesConfiguration(jdbcConfigFile);
-        jdbcConfig.setThrowExceptionOnMissing(true);
-        return new PsqlUnpooledConnectionFactory(jdbcConfig.getString("serverName"),
-                jdbcConfig.getInt("portNumber"),
-                jdbcConfig.getString("databaseName"),
-                jdbcConfig.getString("user"),
-                jdbcConfig.getString("password")
-        );
+        return new PsqlUnpooledConnectionFactory(jdbcConfigFile);
     }
 
     @Provides

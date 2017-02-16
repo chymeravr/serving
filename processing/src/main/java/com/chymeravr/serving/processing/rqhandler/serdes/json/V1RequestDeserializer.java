@@ -1,7 +1,7 @@
-package com.chymeravr.serving.processing.rqhandler.entities.v1.json;
+package com.chymeravr.serving.processing.rqhandler.serdes.json;
 
 import com.chymeravr.schemas.serving.ServingRequest;
-import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
+import com.chymeravr.serving.processing.rqhandler.serdes.RequestDeserializer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

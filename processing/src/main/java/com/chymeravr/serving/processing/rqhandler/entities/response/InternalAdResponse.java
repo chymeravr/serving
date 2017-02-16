@@ -20,11 +20,11 @@ public class InternalAdResponse {
     private final List<Integer> experimentId;
     private final Map<String, ImpressionInfo> ads;
 
-    public ServingResponse getServingResponse() {
+    public ServingResponse getServingResponse(String requestId) {
         return new ServingResponse(responseCode, ads.entrySet().stream().
                 collect(Collectors.toMap(
                         Map.Entry::getKey,
                         v -> new AdMeta(v.getValue().getServingId(), v.getValue().getCreativeUrl()))
-                ));
+                ), requestId);
     }
 }

@@ -1,7 +1,7 @@
-package com.chymeravr.serving.processing.rqhandler.entities.v1.json;
+package com.chymeravr.serving.processing.rqhandler.serdes.json;
 
 import com.chymeravr.schemas.serving.ServingResponse;
-import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
+import com.chymeravr.serving.processing.rqhandler.serdes.ResponseSerializer;
 import com.google.gson.Gson;
 
 /**

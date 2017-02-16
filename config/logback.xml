@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- Tests run on modern PCs show that buffering related property -->
-        <!-- "ImmediateFlush" has negligible impact and will be ignored.  -->
-        <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-        <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
-        <!--for further documentation-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
         <File>/var/log/serving/serving.log</File>
         <encoder>
-            <pattern>[%p] %d %c %M %X{requestId} - %m%n</pattern>
+            <pattern>[%p] %d %logger{5} %M %X{requestId} - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>/var/log/serving/serving.log.%d{yyyy-MM-dd-HH}.zip</fileNamePattern>
@@ -16,16 +14,25 @@
         </rollingPolicy>
     </appender>
     <appender name="debugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
+                <expression>return (((String)mdc.get("chym_trace")).equals("true"));</expression>
+            </evaluator>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>DENY</OnMatch>
+        </filter>
         <File>/var/log/serving/debug.log</File>
         <encoder>
-            <pattern>[%p] %d %c %M %X{requestId} - %m%n</pattern>
+            <pattern>[%p] %d %logger{5} %M %X{requestId} - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>/var/log/serving/debug.log.%d{yyyy-MM-dd-HH}.zip</fileNamePattern>
             <maxHistory>24</maxHistory>
         </rollingPolicy>
     </appender>
-    <root level="info">
+
+    <root level="DEBUG">
         <appender-ref ref="errorLog"/>
+        <appender-ref ref="debugLog"/>
     </root>
 </configuration>

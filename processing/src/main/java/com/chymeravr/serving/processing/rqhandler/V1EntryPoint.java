@@ -2,8 +2,8 @@ package com.chymeravr.serving.processing.rqhandler;
 
 import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
-import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
-import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
+import com.chymeravr.serving.processing.rqhandler.serdes.RequestDeserializer;
+import com.chymeravr.serving.processing.rqhandler.serdes.ResponseSerializer;
 import com.codahale.metrics.MetricRegistry;
 
 import javax.servlet.http.HttpServletResponse;

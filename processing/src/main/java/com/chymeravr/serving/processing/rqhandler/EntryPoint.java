@@ -4,8 +4,8 @@ import com.chymeravr.schemas.serving.*;
 import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
-import com.chymeravr.serving.processing.rqhandler.iface.RequestDeserializer;
-import com.chymeravr.serving.processing.rqhandler.iface.ResponseSerializer;
+import com.chymeravr.serving.processing.rqhandler.serdes.RequestDeserializer;
+import com.chymeravr.serving.processing.rqhandler.serdes.ResponseSerializer;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -58,18 +58,23 @@ public abstract class EntryPoint extends AbstractHandler {
                        org.eclipse.jetty.server.Request baseRequest,
                        HttpServletRequest request,
                        HttpServletResponse response) throws IOException, ServletException {
-        requestsReceived.inc();
+
         final UUID requestId = UUID.randomUUID();
         MDC.put("requestId", requestId.toString());
+        MDC.put("chym_trace", request.getHeader("chym_trace"));
+        requestsReceived.inc();
         List<Integer> experiments = new ArrayList<>();
+
         ServingRequest adRequest = deserializer.deserializeRequest(request);
         log.info("Ad Request : {}", adRequest);
+        log.error("Ad ERROR : {}", adRequest); // TODO
         InternalAdResponse internalAdResponse = adFetcher.getAdResponse(adRequest, experiments);
-        ServingResponse adResponse = internalAdResponse.getServingResponse();
+        ServingResponse adResponse = internalAdResponse.getServingResponse(requestId.toString());
         setReponseHeaders(response);
         PrintWriter out = response.getWriter();
         out.write(new String(serializer.serialize(adResponse)));
         out.flush();
+
         baseRequest.setHandled(true);
 
         RequestInfo requestInfo = new RequestInfo(
@@ -80,28 +85,24 @@ public abstract class EntryPoint extends AbstractHandler {
                 adRequest.getOsVersion(),
                 adRequest.getDevice().getManufacturer());
 
+        ResponseLog servingLog = new ResponseLog(
+                System.currentTimeMillis(),
+                requestId.toString(),
+                adRequest.getSdkVersion(),
+                experiments,
+                requestInfo,
+                ResponseCode.SERVED,
+                internalAdResponse.getAds());
+        try {
+            responseLogger.sendMessage(requestId.toString(),
+                    encode(new TSerializer().serialize(servingLog)),
+                    downStreamTopicName);
+        } catch (Exception e) {
+            log.error("Unable to send kafka message", e);
+        }
 
-        internalAdResponse.getAds().entrySet().forEach(placementImpression -> {
-            String placementId = placementImpression.getKey();
-            ImpressionInfo impressionInfo = placementImpression.getValue();
-            ServingLog servingLog = new ServingLog(
-                    System.currentTimeMillis(),
-                    requestId.toString(),
-                    adRequest.getSdkVersion(),
-                    experiments,
-                    requestInfo,
-                    ResponseCode.SERVED,
-                    placementId,
-                    impressionInfo);
-            try {
-                responseLogger.sendMessage(impressionInfo.getServingId(),
-                        encode(new TSerializer().serialize(servingLog)),
-                        downStreamTopicName);
-            } catch (Exception e) {
-                log.error("Unable to send kafka message", e);
-            }
-        });
-        MDC.remove("requestId");
+//        MDC.remove("requestId");
+        MDC.clear();
         requestsResponded.inc();
     }
 

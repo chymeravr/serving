@@ -1,37 +1,48 @@
 package com.chymeravr.serving.dbconnector;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.configuration.ConfigurationConverter;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * Created by rubbal on 10/2/17.
  * Class to create PSQL connections.
  */
+@Slf4j
 public class PsqlUnpooledConnectionFactory implements ConnectionFactory {
     private final String jdbcResourceUrl;
-    private final String userName;
-    private final String password;
+    private final Properties jdbcProperties;
 
-    public PsqlUnpooledConnectionFactory(String hostname,
-                                         int port,
-                                         String databaseName,
-                                         String userName,
-                                         String password) throws ClassNotFoundException, SQLException {
-        this.jdbcResourceUrl = String.format("jdbc:postgresql://%s:%d/%s", hostname, port, databaseName);
-        this.userName = userName;
-        this.password = password;
+    public PsqlUnpooledConnectionFactory(String jdbcFile) throws ClassNotFoundException, SQLException {
+        PropertiesConfiguration configuration;
+        try {
+            configuration = new PropertiesConfiguration(jdbcFile);
+            configuration.setThrowExceptionOnMissing(true);
+        } catch (ConfigurationException e) {
+            log.error("Unable to initialise PsqlUnpooledConnectionFactory", e);
+            throw new SQLException(jdbcFile);
+        }
+
+        this.jdbcResourceUrl = String.format("jdbc:postgresql://%s:%d/%s",
+                configuration.getString("hostname"),
+                configuration.getInt("port"),
+                configuration.getString("databaseName")
+        );
+
+        this.jdbcProperties = ConfigurationConverter.getProperties(configuration);
         // Verify the class is present and DB connection can be established
         Class.forName("org.postgresql.Driver");
-        DriverManager.getConnection(this.jdbcResourceUrl, userName, password);
+        DriverManager.getConnection(this.jdbcResourceUrl, this.jdbcProperties);
     }
 
-    /**
-     * @return A sql connection. The connection must be closed by the client once the processing is finished
-     * @throws SQLException
-     */
     @Override
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(this.jdbcResourceUrl, this.userName, this.password);
+        return DriverManager.getConnection(this.jdbcResourceUrl, this.jdbcProperties);
     }
 }
