@@ -1,9 +1,6 @@
 package com.chymeravr.serving.processing.adfetcher;
 
-import com.chymeravr.schemas.serving.ImpressionInfo;
-import com.chymeravr.schemas.serving.Placement;
-import com.chymeravr.schemas.serving.ResponseCode;
-import com.chymeravr.schemas.serving.ServingRequest;
+import com.chymeravr.schemas.serving.*;
 import com.chymeravr.serving.cache.ad.AdCache;
 import com.chymeravr.serving.cache.ad.AdEntity;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
@@ -27,7 +24,7 @@ public class AdFetcher {
     private final AdgroupCache adgroupCache;
     private final AdCache adCache;
     private final PlacementCache placementCache;
-
+    private final double defaultCtr;
     private static final String CREATIVE_URL_PREFIX = "https://chymerastatic.blob.core.windows.net/creatives/";
 
     public InternalAdResponse getAdResponse(ServingRequest adRequest, List<Integer> expIds) {
@@ -60,7 +57,8 @@ public class AdFetcher {
             ).collect(Collectors.toList());
             log.info("Candidates having budget: {}", adgroupsWithBudget);
 
-            adgroupsWithBudget.sort(Comparator.comparingDouble(x -> -x.getBid())); // reverse sort
+            adgroupsWithBudget.sort(Comparator.comparingDouble(x ->
+                    x.getPricingModel() == PricingModel.CPC ? -x.getBid() * defaultCtr : -x.getBid())); // reverse sort
 
             List<ImpressionInfo> topAds = getTopAds(adgroupsWithBudget, placements.size());
             // Assign ads to a placement
