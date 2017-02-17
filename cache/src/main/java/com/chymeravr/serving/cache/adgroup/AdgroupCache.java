@@ -133,7 +133,7 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
 
     public Set<AdgroupEntity> getAdgroupsForHmd(int hmdId) {
         Set<AdgroupEntity> adgroupEntities = hmdMapping.get(hmdId);
-        Set<AdgroupEntity> untargetedAdgroups = hmdMapping.get(null);
+        Set<AdgroupEntity> untargetedAdgroups = hmdMapping.get(-1);
 
         // If both empty
         if (adgroupEntities == null && untargetedAdgroups == null) {
