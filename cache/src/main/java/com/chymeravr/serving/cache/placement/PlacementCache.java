@@ -31,11 +31,6 @@ public class PlacementCache extends RefreshableDbCache<String, PlacementEntity> 
         super(name, connectionFactory, metricRegistry, refreshTimeSeconds, clock);
     }
 
-    @Override
-    protected Scheduler scheduler() {
-        return Scheduler.newFixedDelaySchedule(0, 5, TimeUnit.SECONDS);
-    }
-
     public ImmutableMap<String, PlacementEntity> load(Connection connection, Map<String, PlacementEntity> currentEntities) {
         ImmutableMap.Builder<String, PlacementEntity> mapBuilder = ImmutableMap.builder();
         try {

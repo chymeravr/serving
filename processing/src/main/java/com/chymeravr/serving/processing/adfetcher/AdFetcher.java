@@ -79,6 +79,7 @@ public class AdFetcher {
 
         for (AdgroupEntity adgroupEntity : adgroupsForHmd) {
             Set<AdEntity> adsForAdgroup = adCache.getAdsForAdgroup(adgroupEntity.getId());
+            log.info("Ads available for adgroup {}: {}", adgroupEntity.getId(), adsForAdgroup);
             for (AdEntity ad : adsForAdgroup) {
                 if (adsSelected == adsToSelect) {
                     return ads;

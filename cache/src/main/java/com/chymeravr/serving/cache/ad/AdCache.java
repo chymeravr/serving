@@ -32,6 +32,7 @@ public class AdCache extends RefreshableDbCache<String, AdEntity> {
     public ImmutableMap<String, AdEntity> load(Connection connection, Map<String, AdEntity> currentEntities) {
         ImmutableMap.Builder<String, AdEntity> mapBuilder = ImmutableMap.builder();
         Map<String, Set<AdEntity>> newAdsForAdgroup = new HashMap<>();
+        java.sql.Date sqlDate = new java.sql.Date(new Date().getTime());
 
         try {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
@@ -44,6 +45,11 @@ public class AdCache extends RefreshableDbCache<String, AdEntity> {
                     )
                     .from(Tables.ADVERTISER_ADGROUP)
                     .join(Tables.ADVERTISER_AD).on(Tables.ADVERTISER_ADGROUP.ID.equal(Tables.ADVERTISER_AD.ADGROUP_ID))
+                    .where(Tables.ADVERTISER_ADGROUP.STARTDATE.lessOrEqual(sqlDate)
+                            .and(Tables.ADVERTISER_ADGROUP.ENDDATE.greaterOrEqual(sqlDate))
+                            .and(Tables.ADVERTISER_CAMPAIGN.STARTDATE.lessOrEqual(sqlDate))
+                            .and(Tables.ADVERTISER_CAMPAIGN.ENDDATE.greaterOrEqual(sqlDate))
+                    )
                     .fetch();
 
             for (Record record : result) {

@@ -3,6 +3,7 @@ package com.chymeravr.serving.cache.adgroup;
 import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
+import com.chymeravr.serving.dao.Tables;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
 import com.chymeravr.serving.enums.PricingUtils;
 import com.codahale.metrics.MetricRegistry;
@@ -35,6 +36,7 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
     public ImmutableMap<String, AdgroupEntity> load(Connection connection, Map<String, AdgroupEntity> currentEntities) {
         ImmutableMap.Builder<String, AdgroupEntity> mapBuilder = ImmutableMap.builder();
         Map<Integer, Set<AdgroupEntity>> newHmdMappings = new HashMap<>();
+        java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
 
         try {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
@@ -66,6 +68,11 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                     .join(ADVERTISER_TARGETING).on(ADVERTISER_TARGETING.ID.equal(ADVERTISER_ADGROUP_TARGETING.TARGETING_ID))
                     .join(ADVERTISER_CAMPAIGN).on(ADVERTISER_ADGROUP.CAMPAIGN_ID.equal(ADVERTISER_CAMPAIGN.ID))
                     .join(CHYM_USER_PROFILE).on(ADVERTISER_CAMPAIGN.USER_ID.eq(CHYM_USER_PROFILE.USER_ID))
+                    .where(Tables.ADVERTISER_ADGROUP.STARTDATE.lessOrEqual(sqlDate)
+                            .and(Tables.ADVERTISER_ADGROUP.ENDDATE.greaterOrEqual(sqlDate))
+                            .and(Tables.ADVERTISER_CAMPAIGN.STARTDATE.lessOrEqual(sqlDate))
+                            .and(Tables.ADVERTISER_CAMPAIGN.ENDDATE.greaterOrEqual(sqlDate))
+                    )
                     .fetch();
 
             for (Record record : result) {

@@ -22,13 +22,11 @@ import java.sql.SQLException;
 public class CacheModule extends AbstractModule {
 
     private final int defaultRefreshTimeSeconds;
-    private final long dbConnectTimeoutMillis;
     private final Configuration configuration;
 
     public CacheModule(Configuration configuration) throws ConfigurationException {
         this.configuration = configuration;
         this.defaultRefreshTimeSeconds = configuration.getInt("defaultRefreshTimeSeconds");
-        this.dbConnectTimeoutMillis = configuration.getLong("dbConnectTimeoutMillis");
     }
 
     protected void configure() {
