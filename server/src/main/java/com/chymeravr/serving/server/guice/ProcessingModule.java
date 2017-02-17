@@ -32,7 +32,7 @@ public class ProcessingModule extends AbstractModule {
     @Provides
     @Singleton
     AdFetcher providesAdFetcher(AdgroupCache adgroupCache, AdCache adCache, PlacementCache placementCache) {
-        return new AdFetcher(adgroupCache, adCache, placementCache);
+        return new AdFetcher(adgroupCache, adCache, placementCache, configuration.getDouble("defaultCtr"));
     }
 
     @Provides
