@@ -43,7 +43,7 @@ public class PsqlUnpooledConnectionFactory implements ConnectionFactory {
 
     @Override
     public Connection getConnection() throws SQLException {
-        log.error("Getting connection for URL: {}, with Properties: {}", this.jdbcResourceUrl, this.jdbcProperties);
+        log.info("Getting connection for URL: {}, with Properties: {}", this.jdbcResourceUrl, this.jdbcProperties);
         return DriverManager.getConnection(this.jdbcResourceUrl, this.jdbcProperties);
     }
 }
