@@ -12,6 +12,8 @@ import com.chymeravr.serving.cache.placement.PlacementCache;
 import com.chymeravr.serving.cache.placement.PlacementEntity;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
  * Created by rubbal on 19/1/17.
  */
 @Data
+@Slf4j
 public class AdFetcher {
     private final AdgroupCache adgroupCache;
     private final AdCache adCache;
@@ -40,9 +43,13 @@ public class AdFetcher {
             }
         }
 
+        log.info("Valid key? : {}", isValidKey);
+
         if (isValidKey) {
             int hmdId = adRequest.getHmdId();
+
             ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmd(hmdId));
+            log.info("Candidate adgroups for the HMD: {}", adgroupsForHmd);
 
             List<AdgroupEntity> adgroupsWithBudget = adgroupsForHmd.stream().filter(x ->
                     x.getTodayBurn() < x.getDailyBudget() &&
@@ -51,6 +58,7 @@ public class AdFetcher {
                             x.getCmpTotalBurn() < x.getCmpTotalBudget()
 
             ).collect(Collectors.toList());
+            log.info("Candidates having budget: {}", adgroupsWithBudget);
 
             adgroupsWithBudget.sort(Comparator.comparingDouble(x -> -x.getBid())); // reverse sort
 
@@ -60,9 +68,10 @@ public class AdFetcher {
             for (int i = 0; i < topAds.size(); i++) { // At most as many top Ads as placements
                 adsMap.put(placements.get(i).getId(), topAds.get(i));
             }
-            return new InternalAdResponse(adsMap.size() > 0 ? ResponseCode.SERVED : ResponseCode.NO_AD, "OK", expIds, adsMap);
+            return new InternalAdResponse(adsMap.size() > 0 ? ResponseCode.SERVED : ResponseCode.NO_AD, HttpStatus.SC_OK, expIds, adsMap);
         } else {
-            return new InternalAdResponse(ResponseCode.BAD_REQUEST, "Invalid app or placementId", expIds, new HashMap<>());
+            log.info("Invalid app or placementId");
+            return new InternalAdResponse(ResponseCode.BAD_REQUEST, HttpStatus.SC_BAD_REQUEST, expIds, new HashMap<>());
         }
     }
 

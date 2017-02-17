@@ -1,6 +1,9 @@
 package com.chymeravr.serving.processing.rqhandler;
 
-import com.chymeravr.schemas.serving.*;
+import com.chymeravr.schemas.serving.RequestInfo;
+import com.chymeravr.schemas.serving.ResponseLog;
+import com.chymeravr.schemas.serving.ServingRequest;
+import com.chymeravr.schemas.serving.ServingResponse;
 import com.chymeravr.serving.logging.ResponseLogger;
 import com.chymeravr.serving.processing.adfetcher.AdFetcher;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
@@ -59,8 +62,9 @@ public abstract class EntryPoint extends AbstractHandler {
                        HttpServletRequest request,
                        HttpServletResponse response) throws IOException, ServletException {
 
-        final UUID requestId = UUID.randomUUID();
-        MDC.put("requestId", requestId.toString());
+        final String requestId = UUID.randomUUID().toString();
+        // TODO Will work only in single thread per request model. Will need markers when using asynchronous threads
+        MDC.put("requestId", requestId);
         MDC.put("chym_trace", request.getHeader("chym_trace"));
 
         try {
@@ -70,7 +74,10 @@ public abstract class EntryPoint extends AbstractHandler {
             ServingRequest adRequest = deserializer.deserializeRequest(request);
             log.info("Ad Request : {}", adRequest);
             InternalAdResponse internalAdResponse = adFetcher.getAdResponse(adRequest, experiments);
-            ServingResponse adResponse = internalAdResponse.getServingResponse(requestId.toString());
+
+            log.info("Internal Ad Response: {}", internalAdResponse);
+            ServingResponse adResponse = internalAdResponse.getServingResponse(requestId);
+
             setReponseHeaders(response);
             PrintWriter out = response.getWriter();
             out.write(new String(serializer.serialize(adResponse)));
@@ -89,21 +96,26 @@ public abstract class EntryPoint extends AbstractHandler {
 
             ResponseLog servingLog = new ResponseLog(
                     System.currentTimeMillis(),
-                    requestId.toString(),
+                    requestId,
                     adRequest.getSdkVersion(),
                     experiments,
                     requestInfo,
-                    ResponseCode.SERVED,
+                    internalAdResponse.getResponseCode(),
                     internalAdResponse.getAds());
 
-            responseLogger.sendMessage(requestId.toString(),
+            log.info("Kafka message to be sent: {} :: {}", requestId, servingLog);
+            responseLogger.sendMessage(requestId,
                     encode(new TSerializer().serialize(servingLog)),
                     downStreamTopicName);
         } catch (Exception e) {
             log.error("Request path encountered an error", e);
+            boolean handled = baseRequest.isHandled();
+            if (!handled) {
+                setReponseHeaders(response);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
         } finally {
             MDC.clear();
-
         }
 
     }

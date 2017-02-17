@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Data
 public class InternalAdResponse {
     private final ResponseCode responseCode;
-    private final String status;
+    private final int status;
     private final List<Integer> experimentId;
     private final Map<String, ImpressionInfo> ads;
 

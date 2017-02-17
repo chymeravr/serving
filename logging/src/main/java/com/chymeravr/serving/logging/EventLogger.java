@@ -27,6 +27,7 @@ public class EventLogger implements ResponseLogger {
         addToKafkaProps(props, ProducerConfig.MAX_BLOCK_MS_CONFIG, configuration);
         addToKafkaProps(props, ProducerConfig.ACKS_CONFIG, configuration);
 
+        // Important to expose kafka stats
         props.put(ProducerConfig.METRIC_REPORTER_CLASSES_CONFIG, DropwizardReporter.class.getCanonicalName());
         props.put(DropwizardReporterConfig.REGISTRY_PROPERTY_NAME, KAFKA_REGISTRY);
 
