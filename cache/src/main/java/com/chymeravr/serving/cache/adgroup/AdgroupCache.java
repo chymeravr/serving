@@ -68,8 +68,8 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                             ADVERTISER_TARGETING.RAM
                     )
                     .from(ADVERTISER_ADGROUP)
-                    .join(ADVERTISER_ADGROUP_TARGETING).on(ADVERTISER_ADGROUP.ID.equal(ADVERTISER_ADGROUP_TARGETING.ADGROUP_ID))
-                    .join(ADVERTISER_TARGETING).on(ADVERTISER_TARGETING.ID.equal(ADVERTISER_ADGROUP_TARGETING.TARGETING_ID))
+                    .leftJoin(ADVERTISER_ADGROUP_TARGETING).on(ADVERTISER_ADGROUP.ID.equal(ADVERTISER_ADGROUP_TARGETING.ADGROUP_ID))
+                    .leftJoin(ADVERTISER_TARGETING).on(ADVERTISER_TARGETING.ID.equal(ADVERTISER_ADGROUP_TARGETING.TARGETING_ID))
                     .join(ADVERTISER_CAMPAIGN).on(ADVERTISER_ADGROUP.CAMPAIGN_ID.equal(ADVERTISER_CAMPAIGN.ID))
                     .join(CHYM_USER_PROFILE).on(ADVERTISER_CAMPAIGN.USER_ID.eq(CHYM_USER_PROFILE.USER_ID))
                     .where(Tables.ADVERTISER_ADGROUP.STARTDATE.lessOrEqual(sqlDate)
@@ -89,7 +89,15 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                     }
 
                     String adgroupId = record.get(ADVERTISER_ADGROUP.ID).toString();
+
                     Integer hmdId = record.get(ADVERTISER_TARGETING.HMD_ID);
+                    if (hmdId == null) hmdId = -1;
+
+                    Integer osId = record.get(ADVERTISER_TARGETING.OS_ID);
+                    if (osId == null) osId = -1;
+
+                    Integer minRam = record.get(ADVERTISER_TARGETING.RAM);
+                    if (minRam == null) minRam = 0;
 
                     AdgroupEntity.AdgroupEntityBuilder adgroupBuilder = AdgroupEntity.builder();
                     adgroupBuilder.id(record.get(ADVERTISER_ADGROUP.ID).toString());
@@ -104,8 +112,8 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                     adgroupBuilder.cmpTotalBurn(record.get(ADVERTISER_CAMPAIGN.TOTALBURN));
                     adgroupBuilder.cmpTodayBurn(record.get(ADVERTISER_CAMPAIGN.TODAYBURN));
                     adgroupBuilder.pricingModel(PricingUtils.getPricing(record.get(ADVERTISER_ADGROUP.PRICING_ID)));
-                    adgroupBuilder.osId(record.get(ADVERTISER_TARGETING.OS_ID));
-                    adgroupBuilder.minRam(record.get(ADVERTISER_TARGETING.RAM));
+                    adgroupBuilder.osId(osId);
+                    adgroupBuilder.minRam(minRam);
                     adgroupBuilder.hmdId(hmdId);
 
                     AdgroupEntity adgroup = adgroupBuilder.build();
