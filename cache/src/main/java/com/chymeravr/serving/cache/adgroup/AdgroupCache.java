@@ -36,7 +36,11 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
     public ImmutableMap<String, AdgroupEntity> load(Connection connection, Map<String, AdgroupEntity> currentEntities) {
         ImmutableMap.Builder<String, AdgroupEntity> mapBuilder = ImmutableMap.builder();
         Map<Integer, Set<AdgroupEntity>> newHmdMappings = new HashMap<>();
-        java.sql.Date sqlDate = new java.sql.Date(new java.util.Date().getTime());
+        Date sqlDate = new Date(new java.util.Date().getTime());
+        Calendar c = Calendar.getInstance();
+        c.setTime(sqlDate);
+        c.add(Calendar.DATE, -1);
+        Date yesterdayDate = new Date(c.getTime().getTime());
 
         try {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
@@ -69,9 +73,9 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                     .join(ADVERTISER_CAMPAIGN).on(ADVERTISER_ADGROUP.CAMPAIGN_ID.equal(ADVERTISER_CAMPAIGN.ID))
                     .join(CHYM_USER_PROFILE).on(ADVERTISER_CAMPAIGN.USER_ID.eq(CHYM_USER_PROFILE.USER_ID))
                     .where(Tables.ADVERTISER_ADGROUP.STARTDATE.lessOrEqual(sqlDate)
-                            .and(Tables.ADVERTISER_ADGROUP.ENDDATE.greaterOrEqual(sqlDate))
+                            .and(Tables.ADVERTISER_ADGROUP.ENDDATE.greaterThan(yesterdayDate))
                             .and(Tables.ADVERTISER_CAMPAIGN.STARTDATE.lessOrEqual(sqlDate))
-                            .and(Tables.ADVERTISER_CAMPAIGN.ENDDATE.greaterOrEqual(sqlDate))
+                            .and(Tables.ADVERTISER_CAMPAIGN.ENDDATE.greaterThan(yesterdayDate))
                     )
                     .fetch();
 

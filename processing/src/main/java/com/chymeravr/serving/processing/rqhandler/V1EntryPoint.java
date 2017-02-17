@@ -22,6 +22,5 @@ public class V1EntryPoint extends EntryPoint {
 
     public void setReponseHeaders(HttpServletResponse response) {
         response.setContentType("application/json; charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 }

@@ -77,7 +77,7 @@ public abstract class EntryPoint extends AbstractHandler {
 
             log.info("Internal Ad Response: {}", internalAdResponse);
             ServingResponse adResponse = internalAdResponse.getServingResponse(requestId);
-
+            response.setStatus(internalAdResponse.getStatus());
             setReponseHeaders(response);
             PrintWriter out = response.getWriter();
             out.write(new String(serializer.serialize(adResponse)));
