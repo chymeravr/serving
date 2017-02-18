@@ -27,14 +27,39 @@
         <repository>
             <id>releases</id>
             <name>Nexus Staging Repo</name>
-            <url>http://localhost:8081/repository/maven-releases</url>
+            <url>http://13.93.217.168:8081/repository/maven-releases</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>Nexus Staging Repo</name>
-            <url>http://localhost:8081/repository/maven-snapshots</url>
+            <url>http://13.93.217.168:8081/repository/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>releases</id>
+            <name>Nexus Staging Repo</name>
+            <url>http://13.93.217.168:8081/repository/maven-releases</url>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <name>Nexus Staging Repo</name>
+            <url>http://13.93.217.168:8081/repository/maven-snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>http://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://maven.atlassian.com/repository/public</url>
+        </repository>
+    </repositories>
 
     <modules>
         <module>server</module>
