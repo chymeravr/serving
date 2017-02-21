@@ -1,0 +1,11 @@
+[Unit]
+Description=Dashboard container
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStart=/usr/bin/docker run --net=host --name dashboard ciportal-prod
+ExecStop=/usr/bin/docker stop dashboard
+
+[Install]
+WantedBy=default.target
