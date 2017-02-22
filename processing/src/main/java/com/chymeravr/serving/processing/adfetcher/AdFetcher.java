@@ -2,11 +2,12 @@ package com.chymeravr.serving.processing.adfetcher;
 
 import com.chymeravr.schemas.serving.*;
 import com.chymeravr.serving.cache.ad.AdCache;
-import com.chymeravr.serving.cache.ad.AdEntity;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
-import com.chymeravr.serving.cache.adgroup.AdgroupEntity;
 import com.chymeravr.serving.cache.placement.PlacementCache;
-import com.chymeravr.serving.cache.placement.PlacementEntity;
+import com.chymeravr.serving.entities.AdEntity;
+import com.chymeravr.serving.entities.AdgroupEntity;
+import com.chymeravr.serving.entities.Impression;
+import com.chymeravr.serving.entities.PlacementEntity;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,6 @@ public class AdFetcher {
     private final AdCache adCache;
     private final PlacementCache placementCache;
     private final double defaultCtr;
-    private static final String CREATIVE_URL_PREFIX = "https://chymerastatic.blob.core.windows.net/creatives/";
 
     public InternalAdResponse getAdResponse(ServingRequest adRequest, List<Integer> expIds) {
         List<Placement> placements = adRequest.getPlacements();
@@ -60,9 +60,9 @@ public class AdFetcher {
             adgroupsWithBudget.sort(Comparator.comparingDouble(x ->
                     x.getPricingModel() == PricingModel.CPC ? -x.getBid() * defaultCtr : -x.getBid())); // reverse sort
 
-            List<ImpressionInfo> topAds = getTopAds(adgroupsWithBudget, placements.size());
+            List<Impression> topAds = getTopAds(adgroupsWithBudget, placements.size());
             // Assign ads to a placement
-            Map<String, ImpressionInfo> adsMap = new HashMap<>();
+            Map<String, Impression> adsMap = new HashMap<>();
             for (int i = 0; i < topAds.size(); i++) { // At most as many top Ads as placements
                 adsMap.put(placements.get(i).getId(), topAds.get(i));
             }
@@ -73,8 +73,8 @@ public class AdFetcher {
         }
     }
 
-    private List<ImpressionInfo> getTopAds(List<AdgroupEntity> adgroupsForHmd, int adsToSelect) {
-        List<ImpressionInfo> ads = new ArrayList<>();
+    private List<Impression> getTopAds(List<AdgroupEntity> adgroupsForHmd, int adsToSelect) {
+        List<Impression> ads = new ArrayList<>();
         int adsSelected = 0;
 
         for (AdgroupEntity adgroupEntity : adgroupsForHmd) {
@@ -84,16 +84,12 @@ public class AdFetcher {
                 if (adsSelected == adsToSelect) {
                     return ads;
                 }
-                ImpressionInfo impressionInfo = new ImpressionInfo(UUID.randomUUID().toString(),
-                        adgroupEntity.getAdvertiserId(),
-                        adgroupEntity.getId(),
-                        ad.getId(),
+                Impression impression = new Impression(UUID.randomUUID().toString(),
+                        adgroupEntity,
+                        ad,
                         adgroupEntity.getBid(),
-                        adgroupEntity.getBid() * 0.6,
-                        CREATIVE_URL_PREFIX + ad.getUrl(),
-                        adgroupEntity.getPricingModel());
-                impressionInfo.setClickUrl(ad.getLandingPage());
-                ads.add(impressionInfo);
+                        adgroupEntity.getBid() * 0.6);
+                ads.add(impression);
                 adsSelected++;
             }
         }

@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>com.chymeravr.serving</groupId>
-            <artifactId>enums</artifactId>
+            <artifactId>entities</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

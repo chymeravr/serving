@@ -1,4 +1,4 @@
-package com.chymeravr.serving.cache.placement;
+package com.chymeravr.serving.entities;
 
 import com.chymeravr.serving.enums.AppStore;
 import lombok.Data;

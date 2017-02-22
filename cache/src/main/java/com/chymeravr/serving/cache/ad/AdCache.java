@@ -5,6 +5,7 @@ import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
 import com.chymeravr.serving.dao.Tables;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
+import com.chymeravr.serving.entities.AdEntity;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import java.util.*;
  */
 @Slf4j
 public class AdCache extends RefreshableDbCache<String, AdEntity> {
+    private static final String CREATIVE_URL_PREFIX = "https://chymerastatic.blob.core.windows.net/creatives/";
+
     public AdCache(CacheName name,
                    ConnectionFactory connectionFactory,
                    MetricRegistry metricRegistry,
@@ -57,7 +60,7 @@ public class AdCache extends RefreshableDbCache<String, AdEntity> {
                 String adgroupId = record.get(Tables.ADVERTISER_ADGROUP.ID).toString();
 
                 String adId = record.get(Tables.ADVERTISER_AD.ID).toString();
-                String creativeUrl = record.get(Tables.ADVERTISER_AD.CREATIVE);
+                String creativeUrl = CREATIVE_URL_PREFIX + record.get(Tables.ADVERTISER_AD.CREATIVE);
                 String clickUrl = record.get(Tables.ADVERTISER_AD.LANDINGPAGE);
 
                 AdEntity adEntity = new AdEntity(adId, adgroupId, creativeUrl, clickUrl);

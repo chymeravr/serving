@@ -5,6 +5,7 @@ import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
 import com.chymeravr.serving.dao.Tables;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
+import com.chymeravr.serving.entities.AdgroupEntity;
 import com.chymeravr.serving.enums.PricingUtils;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
@@ -43,30 +44,30 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
         Date yesterdayDate = new Date(c.getTime().getTime());
 
         try {
-            DSLContext create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
-            Result<Record19<UUID, UUID, Double, Date, Date, Double, Double, Double, Double, Integer, Boolean, Double, Double, Double, Double, Boolean, Integer, Integer, Integer>>
-                    result = create
-                    .select(
-                            CHYM_USER_PROFILE.ID,
-                            ADVERTISER_ADGROUP.ID,
-                            ADVERTISER_ADGROUP.BID,
-                            ADVERTISER_ADGROUP.STARTDATE,
-                            ADVERTISER_ADGROUP.ENDDATE,
-                            ADVERTISER_ADGROUP.TOTALBUDGET,
-                            ADVERTISER_ADGROUP.DAILYBUDGET,
-                            ADVERTISER_ADGROUP.TOTALBURN,
-                            ADVERTISER_ADGROUP.TODAYBURN,
-                            ADVERTISER_ADGROUP.PRICING_ID,
-                            ADVERTISER_ADGROUP.STATUS,
-                            ADVERTISER_CAMPAIGN.TOTALBUDGET,
-                            ADVERTISER_CAMPAIGN.DAILYBUDGET,
-                            ADVERTISER_CAMPAIGN.TOTALBURN,
-                            ADVERTISER_CAMPAIGN.TODAYBURN,
-                            ADVERTISER_CAMPAIGN.STATUS,
-                            ADVERTISER_TARGETING.HMD_ID,
-                            ADVERTISER_TARGETING.OS_ID,
-                            ADVERTISER_TARGETING.RAM
-                    )
+            DSLContext context = DSL.using(connection, SQLDialect.POSTGRES_9_5);
+            Result<Record20<UUID, UUID, Double, Date, Date, Double, Double, Double, Double, Integer, Boolean, Double, Double, Double, Double, Boolean, Integer, Integer, Integer, String>>
+                    result = context.select(
+                    CHYM_USER_PROFILE.ID,
+                    ADVERTISER_ADGROUP.ID,
+                    ADVERTISER_ADGROUP.BID,
+                    ADVERTISER_ADGROUP.STARTDATE,
+                    ADVERTISER_ADGROUP.ENDDATE,
+                    ADVERTISER_ADGROUP.TOTALBUDGET,
+                    ADVERTISER_ADGROUP.DAILYBUDGET,
+                    ADVERTISER_ADGROUP.TOTALBURN,
+                    ADVERTISER_ADGROUP.TODAYBURN,
+                    ADVERTISER_ADGROUP.PRICING_ID,
+                    ADVERTISER_ADGROUP.STATUS,
+                    ADVERTISER_CAMPAIGN.TOTALBUDGET,
+                    ADVERTISER_CAMPAIGN.DAILYBUDGET,
+                    ADVERTISER_CAMPAIGN.TOTALBURN,
+                    ADVERTISER_CAMPAIGN.TODAYBURN,
+                    ADVERTISER_CAMPAIGN.STATUS,
+                    ADVERTISER_TARGETING.HMD_ID,
+                    ADVERTISER_TARGETING.OS_ID,
+                    ADVERTISER_TARGETING.RAM,
+                    ADVERTISER_CAMPAIGN.APPNAME
+            )
                     .from(ADVERTISER_ADGROUP)
                     .leftJoin(ADVERTISER_ADGROUP_TARGETING).on(ADVERTISER_ADGROUP.ID.equal(ADVERTISER_ADGROUP_TARGETING.ADGROUP_ID))
                     .leftJoin(ADVERTISER_TARGETING).on(ADVERTISER_TARGETING.ID.equal(ADVERTISER_ADGROUP_TARGETING.TARGETING_ID))
@@ -113,6 +114,7 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                     adgroupBuilder.cmpTotalBurn(record.get(ADVERTISER_CAMPAIGN.TOTALBURN));
                     adgroupBuilder.cmpTodayBurn(record.get(ADVERTISER_CAMPAIGN.TODAYBURN));
                     adgroupBuilder.pricingModel(PricingUtils.getPricing(record.get(ADVERTISER_ADGROUP.PRICING_ID)));
+                    adgroupBuilder.appName(record.get(ADVERTISER_CAMPAIGN.APPNAME));
                     adgroupBuilder.osId(osId);
                     adgroupBuilder.minRam(minRam);
                     adgroupBuilder.hmdId(hmdId);

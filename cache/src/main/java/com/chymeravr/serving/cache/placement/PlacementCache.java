@@ -4,6 +4,7 @@ import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
+import com.chymeravr.serving.entities.PlacementEntity;
 import com.chymeravr.serving.enums.AppStore;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
@@ -13,7 +14,6 @@ import org.jooq.impl.DSL;
 import java.sql.Connection;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static com.chymeravr.serving.dao.Tables.PUBLISHER_APP;
 import static com.chymeravr.serving.dao.tables.PublisherPlacement.PUBLISHER_PLACEMENT;

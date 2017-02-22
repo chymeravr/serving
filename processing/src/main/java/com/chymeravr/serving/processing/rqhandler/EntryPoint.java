@@ -101,7 +101,7 @@ public abstract class EntryPoint extends AbstractHandler {
                     experiments,
                     requestInfo,
                     internalAdResponse.getResponseCode(),
-                    internalAdResponse.getAds());
+                    internalAdResponse.getImpressionLogInfo());
 
             log.info("Kafka message to be sent: {} :: {}", requestId, servingLog);
             responseLogger.sendMessage(requestId,

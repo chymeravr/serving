@@ -1,4 +1,4 @@
-package com.chymeravr.serving.cache.ad;
+package com.chymeravr.serving.entities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

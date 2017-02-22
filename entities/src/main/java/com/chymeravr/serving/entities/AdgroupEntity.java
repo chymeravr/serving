@@ -1,4 +1,4 @@
-package com.chymeravr.serving.cache.adgroup;
+package com.chymeravr.serving.entities;
 
 import com.chymeravr.schemas.serving.PricingModel;
 import lombok.*;
@@ -14,6 +14,7 @@ public class AdgroupEntity {
     @NonNull
     private final String id;
     private final String advertiserId;
+    private final String appName;
     private final double bid;
     private final double totalBudget;
     private final double dailyBudget;
