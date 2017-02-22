@@ -24,7 +24,13 @@ public class InternalAdResponse {
         return new ServingResponse(responseCode, ads.entrySet().stream().
                 collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        v -> new AdMeta(v.getValue().getServingId(), v.getValue().getCreativeUrl()))
+                        v -> createAdMeta(v.getValue()))
                 ), requestId);
+    }
+
+    private AdMeta createAdMeta(ImpressionInfo impressionInfo) {
+        AdMeta adMeta = new AdMeta(impressionInfo.getServingId(), impressionInfo.getCreativeUrl());
+        adMeta.setClickUrl(impressionInfo.clickUrl);
+        return adMeta;
     }
 }

@@ -92,6 +92,7 @@ public class AdFetcher {
                         adgroupEntity.getBid() * 0.6,
                         CREATIVE_URL_PREFIX + ad.getUrl(),
                         adgroupEntity.getPricingModel());
+                impressionInfo.setClickUrl(ad.getLandingPage());
                 ads.add(impressionInfo);
                 adsSelected++;
             }

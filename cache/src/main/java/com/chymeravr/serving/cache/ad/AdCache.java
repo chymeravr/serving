@@ -3,7 +3,6 @@ package com.chymeravr.serving.cache.ad;
 import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
-import com.chymeravr.serving.cache.utils.DateUtils;
 import com.chymeravr.serving.dao.Tables;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
 import com.codahale.metrics.MetricRegistry;
@@ -36,12 +35,13 @@ public class AdCache extends RefreshableDbCache<String, AdEntity> {
 
         try {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
-            Result<Record4<UUID, UUID, String, Boolean>> result = create
+            Result<Record5<UUID, UUID, String, Boolean, String>> result = create
                     .select(
                             Tables.ADVERTISER_ADGROUP.ID,
                             Tables.ADVERTISER_AD.ID,
                             Tables.ADVERTISER_AD.CREATIVE,
-                            Tables.ADVERTISER_AD.STATUS
+                            Tables.ADVERTISER_AD.STATUS,
+                            Tables.ADVERTISER_AD.LANDINGPAGE
                     )
                     .from(Tables.ADVERTISER_ADGROUP)
                     .join(Tables.ADVERTISER_AD).on(Tables.ADVERTISER_ADGROUP.ID.equal(Tables.ADVERTISER_AD.ADGROUP_ID))
@@ -58,8 +58,9 @@ public class AdCache extends RefreshableDbCache<String, AdEntity> {
 
                 String adId = record.get(Tables.ADVERTISER_AD.ID).toString();
                 String creativeUrl = record.get(Tables.ADVERTISER_AD.CREATIVE);
+                String clickUrl = record.get(Tables.ADVERTISER_AD.LANDINGPAGE);
 
-                AdEntity adEntity = new AdEntity(adId, adgroupId, creativeUrl);
+                AdEntity adEntity = new AdEntity(adId, adgroupId, creativeUrl, clickUrl);
                 mapBuilder.put(adId, adEntity);
 
                 Set<AdEntity> adEntities = newAdsForAdgroup.get(adgroupId);
