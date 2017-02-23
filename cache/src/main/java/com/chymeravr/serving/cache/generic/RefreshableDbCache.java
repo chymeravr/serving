@@ -3,7 +3,6 @@ package com.chymeravr.serving.cache.generic;
 import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.utils.Clock;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
-import com.chymeravr.serving.entities.cache.AbstractEntity;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * Created by rubbal on 16/1/17.
  */
 @Slf4j
-public abstract class RefreshableDbCache<T extends AbstractEntity> extends AbstractScheduledService {
+public abstract class RefreshableDbCache<T> extends AbstractScheduledService {
     private final Counter updatesAttemped;
     private final Counter updatesSucceeded;
     private final Counter updatesFailed;
@@ -104,10 +102,8 @@ public abstract class RefreshableDbCache<T extends AbstractEntity> extends Abstr
     }
 
     /**
-     *
      * @param query
      * @return the unique results of this query
-     *
      * @throws NonUniqueObjectException if the result is not unique
      */
     public T queryEntity(Query<T> query) {

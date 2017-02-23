@@ -10,7 +10,7 @@ import static com.googlecode.cqengine.query.QueryFactory.attribute;
  * Created by rubbal on 16/1/17.
  */
 @Data
-public class PlacementEntity implements AbstractEntity {
+public class PlacementEntity {
     public static final Attribute<PlacementEntity, String> ID = attribute(PlacementEntity::getId);
 
     private final String id;

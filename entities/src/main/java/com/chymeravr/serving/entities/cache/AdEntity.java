@@ -16,7 +16,7 @@ import static com.googlecode.cqengine.query.QueryFactory.attribute;
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = {"id"})
-public class AdEntity implements AbstractEntity {
+public class AdEntity {
     public static final Attribute<AdEntity, String> ID = attribute(AdEntity::getId);
     public static final Attribute<AdEntity, String> ADGROUP_ID = attribute(AdEntity::getAdgroupId);
 

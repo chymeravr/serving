@@ -13,7 +13,7 @@ import static com.googlecode.cqengine.query.QueryFactory.attribute;
 @ToString
 @Builder
 @Getter
-public class AdgroupEntity implements AbstractEntity {
+public class AdgroupEntity {
 
     public static final Attribute<AdgroupEntity, String> ID = attribute(AdgroupEntity::getId);
     public static final Attribute<AdgroupEntity, Integer> HMD = attribute(AdgroupEntity::getHmdId);
