@@ -1,13 +1,16 @@
 package com.chymeravr.serving.processing.adfetcher;
 
-import com.chymeravr.schemas.serving.*;
+import com.chymeravr.schemas.serving.Placement;
+import com.chymeravr.schemas.serving.PricingModel;
+import com.chymeravr.schemas.serving.ResponseCode;
+import com.chymeravr.schemas.serving.ServingRequest;
 import com.chymeravr.serving.cache.ad.AdCache;
 import com.chymeravr.serving.cache.adgroup.AdgroupCache;
 import com.chymeravr.serving.cache.placement.PlacementCache;
-import com.chymeravr.serving.entities.AdEntity;
-import com.chymeravr.serving.entities.AdgroupEntity;
 import com.chymeravr.serving.entities.Impression;
-import com.chymeravr.serving.entities.PlacementEntity;
+import com.chymeravr.serving.entities.cache.AdEntity;
+import com.chymeravr.serving.entities.cache.AdgroupEntity;
+import com.chymeravr.serving.entities.cache.PlacementEntity;
 import com.chymeravr.serving.processing.rqhandler.entities.response.InternalAdResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,8 @@ import org.apache.http.HttpStatus;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.googlecode.cqengine.query.QueryFactory.equal;
 
 /**
  * Created by rubbal on 19/1/17.
@@ -33,7 +38,7 @@ public class AdFetcher {
 
         boolean isValidKey = true;
         for (Placement placement : placements) {
-            PlacementEntity placementEntity = placementCache.getPlacementEntity(placement.getId());
+            PlacementEntity placementEntity = placementCache.queryEntity(equal(PlacementEntity.ID, placement.getId()));
             if (placementEntity == null || !placementEntity.getAppId().equals(appId)) {
                 isValidKey = false;
                 break;
@@ -78,7 +83,7 @@ public class AdFetcher {
         int adsSelected = 0;
 
         for (AdgroupEntity adgroupEntity : adgroupsForHmd) {
-            Set<AdEntity> adsForAdgroup = adCache.getAdsForAdgroup(adgroupEntity.getId());
+            Set<AdEntity> adsForAdgroup = adCache.queryEntities(equal(AdEntity.ADGROUP_ID, adgroupEntity.getId()));
             log.info("Ads available for adgroup {}: {}", adgroupEntity.getId(), adsForAdgroup);
             for (AdEntity ad : adsForAdgroup) {
                 if (adsSelected == adsToSelect) {

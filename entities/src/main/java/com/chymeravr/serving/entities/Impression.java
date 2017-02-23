@@ -1,6 +1,8 @@
 package com.chymeravr.serving.entities;
 
 import com.chymeravr.schemas.serving.ImpressionInfo;
+import com.chymeravr.serving.entities.cache.AdEntity;
+import com.chymeravr.serving.entities.cache.AdgroupEntity;
 import lombok.Data;
 import lombok.NonNull;
 

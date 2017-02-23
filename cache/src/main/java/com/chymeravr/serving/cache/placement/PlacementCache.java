@@ -4,15 +4,18 @@ import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
-import com.chymeravr.serving.entities.PlacementEntity;
+import com.chymeravr.serving.entities.cache.PlacementEntity;
 import com.chymeravr.serving.enums.AppStore;
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.googlecode.cqengine.ConcurrentIndexedCollection;
+import com.googlecode.cqengine.IndexedCollection;
+import com.googlecode.cqengine.index.hash.HashIndex;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.chymeravr.serving.dao.Tables.PUBLISHER_APP;
@@ -22,7 +25,7 @@ import static com.chymeravr.serving.dao.tables.PublisherPlacement.PUBLISHER_PLAC
 /**
  * Created by rubbal on 12/1/17.
  */
-public class PlacementCache extends RefreshableDbCache<String, PlacementEntity> {
+public class PlacementCache extends RefreshableDbCache<PlacementEntity> {
     public PlacementCache(CacheName name,
                           ConnectionFactory connectionFactory,
                           MetricRegistry metricRegistry,
@@ -31,8 +34,8 @@ public class PlacementCache extends RefreshableDbCache<String, PlacementEntity> 
         super(name, connectionFactory, metricRegistry, refreshTimeSeconds, clock);
     }
 
-    public ImmutableMap<String, PlacementEntity> load(Connection connection, Map<String, PlacementEntity> currentEntities) {
-        ImmutableMap.Builder<String, PlacementEntity> mapBuilder = ImmutableMap.builder();
+    public Set<PlacementEntity> load(Connection connection, IndexedCollection<PlacementEntity> currentEntities) {
+        ImmutableSet.Builder<PlacementEntity> builder = ImmutableSet.builder();
         try {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
             Result<Record3<UUID, UUID, Integer>> result = create
@@ -52,15 +55,19 @@ public class PlacementCache extends RefreshableDbCache<String, PlacementEntity> 
                         record.get(PUBLISHER_PLACEMENT.APP_ID).toString(),
                         AppStore.getAppStore(record.get(PUBLISHER_APP.APPSTORE_ID))
                 );
-                mapBuilder.put(placementId, placementEntity);
+                builder.add(placementEntity);
             }
-            return mapBuilder.build();
+            return builder.build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public PlacementEntity getPlacementEntity(String placementId) {
-        return this.getEntities().get(placementId);
+    @Override
+    public IndexedCollection<PlacementEntity> getEmptyIndexedCollection() {
+        ConcurrentIndexedCollection<PlacementEntity> entities = new ConcurrentIndexedCollection<>();
+        entities.addIndex(HashIndex.onAttribute(PlacementEntity.ID));
+
+        return entities;
     }
 }

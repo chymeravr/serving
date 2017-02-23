@@ -1,7 +1,10 @@
-package com.chymeravr.serving.entities;
+package com.chymeravr.serving.entities.cache;
 
 import com.chymeravr.schemas.serving.PricingModel;
+import com.googlecode.cqengine.attribute.Attribute;
 import lombok.*;
+
+import static com.googlecode.cqengine.query.QueryFactory.attribute;
 
 /**
  * Created by rubbal on 16/1/17.
@@ -10,7 +13,11 @@ import lombok.*;
 @ToString
 @Builder
 @Getter
-public class AdgroupEntity {
+public class AdgroupEntity implements AbstractEntity {
+
+    public static final Attribute<AdgroupEntity, String> ID = attribute(AdgroupEntity::getId);
+    public static final Attribute<AdgroupEntity, Integer> HMD = attribute(AdgroupEntity::getHmdId);
+
     @NonNull
     private final String id;
     private final String advertiserId;

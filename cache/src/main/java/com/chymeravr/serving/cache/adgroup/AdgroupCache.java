@@ -5,25 +5,32 @@ import com.chymeravr.serving.cache.generic.RefreshableDbCache;
 import com.chymeravr.serving.cache.utils.Clock;
 import com.chymeravr.serving.dao.Tables;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
-import com.chymeravr.serving.entities.AdgroupEntity;
+import com.chymeravr.serving.entities.cache.AdgroupEntity;
 import com.chymeravr.serving.enums.PricingUtils;
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.googlecode.cqengine.ConcurrentIndexedCollection;
+import com.googlecode.cqengine.IndexedCollection;
+import com.googlecode.cqengine.index.hash.HashIndex;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.chymeravr.serving.dao.Tables.*;
+import static com.googlecode.cqengine.query.QueryFactory.equal;
+import static com.googlecode.cqengine.query.QueryFactory.or;
 
 /**
  * Created by rubbal on 12/1/17.
  */
 @Slf4j
-public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
+public class AdgroupCache extends RefreshableDbCache<AdgroupEntity> {
     public AdgroupCache(CacheName name,
                         ConnectionFactory connectionFactory,
                         MetricRegistry metricRegistry,
@@ -32,11 +39,18 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
         super(name, connectionFactory, metricRegistry, refreshTimeSeconds, clock);
     }
 
-    private ImmutableMap<Integer, Set<AdgroupEntity>> hmdMapping;
+    @Override
+    public IndexedCollection<AdgroupEntity> getEmptyIndexedCollection() {
+        ConcurrentIndexedCollection<AdgroupEntity> entities = new ConcurrentIndexedCollection<>();
+        entities.addIndex(HashIndex.onAttribute(AdgroupEntity.ID));
+        entities.addIndex(HashIndex.onAttribute(AdgroupEntity.HMD));
 
-    public ImmutableMap<String, AdgroupEntity> load(Connection connection, Map<String, AdgroupEntity> currentEntities) {
-        ImmutableMap.Builder<String, AdgroupEntity> mapBuilder = ImmutableMap.builder();
-        Map<Integer, Set<AdgroupEntity>> newHmdMappings = new HashMap<>();
+        return entities;
+    }
+
+    @Override
+    public Set<AdgroupEntity> load(Connection connection, IndexedCollection<AdgroupEntity> currentEntities) {
+        ImmutableSet.Builder<AdgroupEntity> entityBuilder = ImmutableSet.builder();
         Date sqlDate = new Date(new java.util.Date().getTime());
         Calendar c = Calendar.getInstance();
         c.setTime(sqlDate);
@@ -120,22 +134,12 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
                     adgroupBuilder.hmdId(hmdId);
 
                     AdgroupEntity adgroup = adgroupBuilder.build();
-                    mapBuilder.put(adgroupId, adgroup);
-
-                    Set<AdgroupEntity> adgroupEntities = newHmdMappings.get(hmdId);
-                    if (adgroupEntities == null) {
-                        adgroupEntities = new HashSet<>();
-                        adgroupEntities.add(adgroup);
-                        newHmdMappings.put(hmdId, adgroupEntities);
-                    } else {
-                        adgroupEntities.add(adgroup);
-                    }
+                    entityBuilder.add(adgroup);
                 } catch (Exception e) {
                     log.error("Unable to load entity: {}", record, e);
                 }
             }
-            this.hmdMapping = ImmutableMap.copyOf(newHmdMappings);
-            return mapBuilder.build();
+            return entityBuilder.build();
         } catch (Exception e) {
             log.error("Unable to refresh repo", e);
             throw new RuntimeException(e);
@@ -143,28 +147,9 @@ public class AdgroupCache extends RefreshableDbCache<String, AdgroupEntity> {
     }
 
     public Set<AdgroupEntity> getAdgroupsForHmd(int hmdId) {
-        Set<AdgroupEntity> adgroupEntities = hmdMapping.get(hmdId);
-        Set<AdgroupEntity> untargetedAdgroups = hmdMapping.get(-1);
-
-        // If both empty
-        if (adgroupEntities == null && untargetedAdgroups == null) {
-            return Collections.emptySet();
-        }
-
-        // Guaranteed that one of them is non-null. Create new objects to avoid leaking references.
-        // TODO: Return immutable sets
-        if (adgroupEntities == null) {
-            return new HashSet<>(untargetedAdgroups);
-        }
-
-        if (untargetedAdgroups == null) {
-            return new HashSet<>(adgroupEntities);
-        }
-
-        // If both of them are non-null, create a new set and add them both
-        Set<AdgroupEntity> validAdgroups = new HashSet<>();
-        validAdgroups.addAll(untargetedAdgroups);
-        validAdgroups.addAll(adgroupEntities);
-        return validAdgroups;
+        return this.queryEntities(or(
+                equal(AdgroupEntity.HMD, hmdId),
+                equal(AdgroupEntity.HMD, -1)) // All targeted
+        );
     }
 }

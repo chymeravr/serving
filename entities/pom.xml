@@ -12,6 +12,11 @@
     <artifactId>entities</artifactId>
     <dependencies>
         <dependency>
+            <groupId>com.googlecode.cqengine</groupId>
+            <artifactId>cqengine</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
             <groupId>com.chymeravr.schemas</groupId>
             <artifactId>schemas</artifactId>
             <version>0.1-SNAPSHOT</version>
