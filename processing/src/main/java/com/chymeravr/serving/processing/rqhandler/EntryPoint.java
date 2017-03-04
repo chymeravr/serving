@@ -63,7 +63,7 @@ public abstract class EntryPoint extends AbstractHandler {
                        HttpServletResponse response) throws IOException, ServletException {
 
         final String requestId = UUID.randomUUID().toString();
-        // TODO Will work only in single thread per request model. Will need markers when using asynchronous threads
+        // TODO Will work only in single thread per request model. Will need markers when using asynchronous workers
         MDC.put("requestId", requestId);
         MDC.put("chym_trace", request.getHeader("chym_trace"));
 
