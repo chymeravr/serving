@@ -84,8 +84,10 @@ public class AdFetcher {
 
         for (AdgroupEntity adgroupEntity : adgroupsForHmd) {
             Set<AdEntity> adsForAdgroup = adCache.queryEntities(equal(AdEntity.ADGROUP_ID, adgroupEntity.getId()));
-            log.info("Ads available for adgroup {}: {}", adgroupEntity.getId(), adsForAdgroup);
-            for (AdEntity ad : adsForAdgroup) {
+            ArrayList<AdEntity> randomizedAds = new ArrayList<>(adsForAdgroup);
+            Collections.shuffle(randomizedAds);
+            log.info("Ads available for adgroup {}: {}", adgroupEntity.getId(), randomizedAds);
+            for (AdEntity ad : randomizedAds) {
                 if (adsSelected == adsToSelect) {
                     return ads;
                 }

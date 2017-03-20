@@ -39,13 +39,14 @@ public class AdCache extends RefreshableDbCache<AdEntity> {
 
         try {
             DSLContext create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
-            Result<Record5<UUID, UUID, String, Boolean, String>> result = create
+            Result<Record6<UUID, UUID, String, Boolean, String, Integer>> result = create
                     .select(
                             Tables.ADVERTISER_ADGROUP.ID,
                             Tables.ADVERTISER_AD.ID,
                             Tables.ADVERTISER_AD.CREATIVE,
                             Tables.ADVERTISER_AD.STATUS,
-                            Tables.ADVERTISER_AD.LANDINGPAGE
+                            Tables.ADVERTISER_AD.LANDINGPAGE,
+                            Tables.ADVERTISER_AD.ADTYPE
                     )
                     .from(Tables.ADVERTISER_ADGROUP)
                     .join(Tables.ADVERTISER_AD).on(Tables.ADVERTISER_ADGROUP.ID.equal(Tables.ADVERTISER_AD.ADGROUP_ID))
@@ -63,8 +64,9 @@ public class AdCache extends RefreshableDbCache<AdEntity> {
                 String adId = record.get(Tables.ADVERTISER_AD.ID).toString();
                 String creativeUrl = CREATIVE_URL_PREFIX + record.get(Tables.ADVERTISER_AD.CREATIVE);
                 String clickUrl = record.get(Tables.ADVERTISER_AD.LANDINGPAGE);
+                Integer adType = record.get(Tables.ADVERTISER_AD.ADTYPE);
 
-                AdEntity adEntity = new AdEntity(adId, adgroupId, creativeUrl, clickUrl);
+                AdEntity adEntity = new AdEntity(adId, adgroupId, creativeUrl, clickUrl, adType);
                 builder.add(adEntity);
             }
 

@@ -24,4 +24,5 @@ public class AdEntity {
     private final String adgroupId;
     private final String url;
     private final String landingPage;
+    private final int adType;
 }
