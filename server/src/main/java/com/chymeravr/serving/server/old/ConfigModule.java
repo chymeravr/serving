@@ -1,4 +1,4 @@
-package com.chymeravr.serving.server.guice;
+package com.chymeravr.serving.server.old;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

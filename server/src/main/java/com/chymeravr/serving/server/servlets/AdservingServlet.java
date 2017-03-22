@@ -1,5 +1,6 @@
-package com.chymeravr.serving.server.guice;
+package com.chymeravr.serving.server.servlets;
 
+import com.chymeravr.serving.server.ServingResponse;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import lombok.Data;

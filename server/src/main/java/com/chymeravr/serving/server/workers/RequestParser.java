@@ -1,6 +1,7 @@
-package com.chymeravr.serving.server.guice;
+package com.chymeravr.serving.server.workers;
 
-import com.google.inject.Inject;
+import com.chymeravr.serving.server.servlets.AdservingServlet;
+import lombok.Data;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -8,13 +9,10 @@ import java.io.IOException;
 /**
  * Created by rubbal on 21/3/17.
  */
-public class RequestParser {
-    HttpServletRequest request;
 
-    @Inject
-    public RequestParser(HttpServletRequest request) {
-        this.request = request;
-    }
+@Data
+public class RequestParser {
+    private final HttpServletRequest request;
 
     public AdservingServlet.RequestObject parse() throws IOException {
         return (AdservingServlet.RequestObject) request.getServletContext().getAttribute("request");

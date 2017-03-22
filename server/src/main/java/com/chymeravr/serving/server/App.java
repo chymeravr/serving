@@ -2,6 +2,7 @@ package com.chymeravr.serving.server;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.chymeravr.serving.server.dag.ExecutionDag;
 import com.chymeravr.serving.server.guice.AppServletModule;
 import com.chymeravr.serving.server.guice.WorkerModule;
 import com.google.inject.Guice;
@@ -56,7 +57,8 @@ public class App {
         Guice.createInjector(
                 Stage.PRODUCTION,
                 new WorkerModule(),
-                new AppServletModule()
+                new AppServletModule(),
+                new ExecutionDag()
         );
 
         ServletContextHandler context = new ServletContextHandler(server, "/");
