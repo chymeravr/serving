@@ -56,8 +56,8 @@ public class App {
 
         Guice.createInjector(
                 Stage.PRODUCTION,
-                new WorkerModule(),
                 new AppServletModule(),
+                new WorkerModule(),
                 new ExecutionDag()
         );
 
