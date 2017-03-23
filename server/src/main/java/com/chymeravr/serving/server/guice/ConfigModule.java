@@ -1,4 +1,4 @@
-package com.chymeravr.serving.server.old;
+package com.chymeravr.serving.server.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -30,5 +30,19 @@ public class ConfigModule extends AbstractModule {
         PropertiesConfiguration config = new PropertiesConfiguration(filePath);
         config.setThrowExceptionOnMissing(true);
         return config;
+    }
+
+    @Provides
+    @Singleton
+    @Named("defaultCtr")
+    Double providesDefaultCtr(Configuration configuration) {
+        return configuration.getDouble("defaultCtr");
+    }
+
+    @Provides
+    @Singleton
+    @Named("topicName")
+    String providesTopicName(Configuration configuration) {
+        return configuration.getString("kafkaTopicName");
     }
 }

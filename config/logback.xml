@@ -2,7 +2,7 @@
 <configuration>
     <turboFilter class="ch.qos.logback.classic.turbo.DynamicThresholdFilter">
         <Key>chym_trace</Key>
-        <DefaultThreshold>ERROR</DefaultThreshold>
+        <DefaultThreshold>DEBUG</DefaultThreshold>
         <MDCValueLevelPair>
             <value>true</value>
             <level>DEBUG</level>

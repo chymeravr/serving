@@ -1,8 +1,9 @@
 package com.chymeravr.serving.server.servlets;
 
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.chymeravr.schemas.serving.ServingRequest;
+import com.chymeravr.schemas.serving.ServingResponse;
+import org.slf4j.MDC;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -14,29 +15,33 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Created by rubbal on 21/3/17.
  */
-@Path("/api/v1/ads")
+@Path("/v1/ads")
 public class AdservingServlet {
     @Inject
-    private Provider<RequestObject> requestObjectProvider;
+    private Provider<ServingResponse> servingResponseProvider;
 
-    @Data
-    @NoArgsConstructor
-    public static class RequestObject {
-        private int id;
-    }
-
+    @Context
+    HttpServletRequest request;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public RequestObject echo(RequestObject requestObject, @Context HttpServletRequest httpRequest
-    ) throws IOException {
-        httpRequest.setAttribute("request", requestObject);
-        System.out.println(requestObjectProvider.get() + " |" + requestObject);
-        return requestObjectProvider.get();
+    public ServingResponse echo(ServingRequest servingRequest) throws IOException {
+        try {
+            String requestId = UUID.randomUUID().toString();
+            MDC.put("requestId", requestId);
+            MDC.put("chym_trace", request.getHeader("chym_trace"));
+            request.setAttribute("request", servingRequest);
+            request.setAttribute("requestId", requestId);
+
+            return servingResponseProvider.get();
+        } finally {
+            MDC.clear();
+        }
     }
 }

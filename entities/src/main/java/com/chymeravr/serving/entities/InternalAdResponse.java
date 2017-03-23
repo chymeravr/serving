@@ -1,4 +1,4 @@
-package com.chymeravr.serving.processing.rqhandler.entities.response;
+package com.chymeravr.serving.entities;
 
 import com.chymeravr.schemas.serving.AdMeta;
 import com.chymeravr.schemas.serving.ImpressionInfo;

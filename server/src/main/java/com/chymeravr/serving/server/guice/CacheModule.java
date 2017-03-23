@@ -1,4 +1,4 @@
-package com.chymeravr.serving.server.old;
+package com.chymeravr.serving.server.guice;
 
 import com.chymeravr.serving.cache.CacheName;
 import com.chymeravr.serving.cache.ad.AdCache;
