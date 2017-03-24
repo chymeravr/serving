@@ -8,6 +8,7 @@ import com.chymeravr.serving.cache.utils.Clock;
 import com.chymeravr.serving.dbconnector.ConnectionFactory;
 import com.chymeravr.serving.dbconnector.PsqlUnpooledConnectionFactory;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.SharedMetricRegistries;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -20,7 +21,7 @@ import java.sql.SQLException;
  * Created by rubbal on 16/1/17.
  */
 public class CacheModule extends AbstractModule {
-
+    public static final String METRIC_REGISTRY_NAME = "app";
     private final int defaultRefreshTimeSeconds;
     private final Configuration configuration;
 
@@ -43,7 +44,9 @@ public class CacheModule extends AbstractModule {
     @Provides
     @Singleton
     MetricRegistry providesMetricRegistry() {
-        return new MetricRegistry();
+        MetricRegistry metricRegistry = new MetricRegistry();
+        SharedMetricRegistries.add(METRIC_REGISTRY_NAME, metricRegistry);
+        return metricRegistry;
     }
 
     @Provides

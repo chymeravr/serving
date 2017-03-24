@@ -11,6 +11,8 @@ import com.chymeravr.serving.workers.adranker.AdRanker;
 import com.chymeravr.serving.workers.adselector.AdSelector;
 import com.chymeravr.serving.workers.responsewriter.ResponseWriter;
 import com.chymeravr.serving.workers.validator.RequestValidator;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -68,5 +70,12 @@ public class WorkerModule extends AbstractModule {
     @Singleton
     ResponseLogger providesEventLogger(@Named("devMode") boolean devMode, Configuration configuration) {
         return devMode ? new NoOpLogger() : new EventLogger(configuration.subset("kafka"));
+    }
+
+    @Provides
+    @Singleton
+    @Named("LatencyTimer")
+    Timer providesTimer(MetricRegistry metricRegistry) {
+        return metricRegistry.timer("serving.latencyTimer");
     }
 }

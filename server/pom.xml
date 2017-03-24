@@ -61,8 +61,19 @@
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
             <version>${jersey.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jersey</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+
     </dependencies>
 </project>
