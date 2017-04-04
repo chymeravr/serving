@@ -22,6 +22,8 @@ COPY config $BASE/config/
 # Change directory to project root
 WORKDIR $BASE
 
+ENV PORT=8080
+
 RUN ls $BASE
 CMD java -jar \
     -Dlogback.configurationFile=config/logback.xml \
@@ -29,5 +31,5 @@ CMD java -jar \
     -Dcom.sun.management.jmxremote.authenticate=false \
     serving-assembly-*-jar-with-dependencies.jar\
     -p $PORT \
-    -c config/serving.config
+    -c $BASE/config/serving.config
 

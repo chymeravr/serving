@@ -1,0 +1,13 @@
+[Unit]
+Description=Adserving
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill serving
+ExecStartPre=-/usr/bin/docker rm serving
+ExecStart=/usr/bin/docker run --net=host --name serving serving -v /var/log/:/var/log
+ExecStop=/usr/bin/docker stop serving
+
+[Install]
+WantedBy=default.target
