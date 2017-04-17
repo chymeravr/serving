@@ -64,4 +64,19 @@ Domain name: `serving.chymeravr.com:8080`
 
 #### Execution
 * `mvn clean install`
-* (Fix the paths in serving.config)`java -jar assembly/target/*-jar-with-dependencies.jar -c <config> file -p 8080`
+* Build the `docker` image named `serving` using from the root folder containing the Dockerfile (The jar path should be in the same or child directories as docker does not allow resources from outside the current directory and its children)
+```bash
+sudo docker build --build-arg JAR=/path/to/assembly/jar -t serving .
+```
+* Run the image `serving` (Make sure already running containers for this image are stopped as it will throw an error while binding to the port)
+```bash
+sudo docker run -t -e PORT=8080 --net=host serving
+
+```
+
+#### Logging
+To enable debug logging, set the following header
+```
+chym_trace : true
+```
+The logs will be in the /var/log/serving directory. Note that in the Docker image, the log volume is mounted to be an external end point. So you do not need to log into the docker container to view the logs.
