@@ -19,10 +19,12 @@ import static com.googlecode.cqengine.query.QueryFactory.attribute;
 public class AdEntity {
     public static final Attribute<AdEntity, String> ID = attribute(AdEntity::getId);
     public static final Attribute<AdEntity, String> ADGROUP_ID = attribute(AdEntity::getAdgroupId);
+    public static final Attribute<AdEntity, Integer> MIN_SDK = attribute(AdEntity::getMinSdkVersion);
 
     private final String id;
     private final String adgroupId;
     private final String url;
     private final String landingPage;
     private final int adType;
+    private final int minSdkVersion;
 }

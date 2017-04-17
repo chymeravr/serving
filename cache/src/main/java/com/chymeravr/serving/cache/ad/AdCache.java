@@ -11,11 +11,14 @@ import com.google.common.collect.ImmutableSet;
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.hash.HashIndex;
+import com.googlecode.cqengine.index.navigable.NavigableIndex;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,6 +28,13 @@ import java.util.UUID;
 @Slf4j
 public class AdCache extends RefreshableDbCache<AdEntity> {
     private static final String CREATIVE_URL_PREFIX = "https://chymerastatic.blob.core.windows.net/creatives/";
+    private static final Map<Integer, Integer> minSdkVersionMap;
+    static {
+        minSdkVersionMap = new HashMap<>();
+        // No mins for now
+        minSdkVersionMap.put(0, -1);
+        minSdkVersionMap.put(1, -1);
+    }
 
     public AdCache(CacheName name,
                    ConnectionFactory connectionFactory,
@@ -66,7 +76,8 @@ public class AdCache extends RefreshableDbCache<AdEntity> {
                 String clickUrl = record.get(Tables.ADVERTISER_AD.LANDINGPAGE);
                 Integer adType = record.get(Tables.ADVERTISER_AD.ADTYPE);
 
-                AdEntity adEntity = new AdEntity(adId, adgroupId, creativeUrl, clickUrl, adType);
+                AdEntity adEntity = new AdEntity(adId, adgroupId, creativeUrl, clickUrl, adType,
+                        minSdkVersionMap.get(adType));
                 builder.add(adEntity);
             }
 
@@ -82,6 +93,7 @@ public class AdCache extends RefreshableDbCache<AdEntity> {
         ConcurrentIndexedCollection<AdEntity> entities = new ConcurrentIndexedCollection<>();
         entities.addIndex(HashIndex.onAttribute(AdEntity.ID));
         entities.addIndex(HashIndex.onAttribute(AdEntity.ADGROUP_ID));
+        entities.addIndex(NavigableIndex.onAttribute(AdEntity.MIN_SDK));
 
         return entities;
     }

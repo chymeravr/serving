@@ -23,8 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.chymeravr.serving.dao.Tables.*;
-import static com.googlecode.cqengine.query.QueryFactory.equal;
-import static com.googlecode.cqengine.query.QueryFactory.or;
+import static com.googlecode.cqengine.query.QueryFactory.*;
 
 /**
  * Created by rubbal on 12/1/17.
@@ -77,14 +76,12 @@ public class AdgroupCache extends RefreshableDbCache<AdgroupEntity> {
                     ADVERTISER_CAMPAIGN.TOTALBURN,
                     ADVERTISER_CAMPAIGN.TODAYBURN,
                     ADVERTISER_CAMPAIGN.STATUS,
-                    ADVERTISER_TARGETING.HMD_ID,
-                    ADVERTISER_TARGETING.OS_ID,
-                    ADVERTISER_TARGETING.RAM,
+                    ADVERTISER_CAMPAIGN.HMD_ID,
+                    ADVERTISER_CAMPAIGN.OS_ID,
+                    ADVERTISER_CAMPAIGN.RAM,
                     ADVERTISER_CAMPAIGN.APPNAME
             )
                     .from(ADVERTISER_ADGROUP)
-                    .leftJoin(ADVERTISER_ADGROUP_TARGETING).on(ADVERTISER_ADGROUP.ID.equal(ADVERTISER_ADGROUP_TARGETING.ADGROUP_ID))
-                    .leftJoin(ADVERTISER_TARGETING).on(ADVERTISER_TARGETING.ID.equal(ADVERTISER_ADGROUP_TARGETING.TARGETING_ID))
                     .join(ADVERTISER_CAMPAIGN).on(ADVERTISER_ADGROUP.CAMPAIGN_ID.equal(ADVERTISER_CAMPAIGN.ID))
                     .join(CHYM_USER_PROFILE).on(ADVERTISER_CAMPAIGN.USER_ID.eq(CHYM_USER_PROFILE.USER_ID))
                     .where(Tables.ADVERTISER_ADGROUP.STARTDATE.lessOrEqual(sqlDate)
@@ -104,17 +101,6 @@ public class AdgroupCache extends RefreshableDbCache<AdgroupEntity> {
                         continue;
                     }
 
-                    String adgroupId = record.get(ADVERTISER_ADGROUP.ID).toString();
-
-                    Integer hmdId = record.get(ADVERTISER_TARGETING.HMD_ID);
-                    if (hmdId == null) hmdId = -1;
-
-                    Integer osId = record.get(ADVERTISER_TARGETING.OS_ID);
-                    if (osId == null) osId = -1;
-
-                    Integer minRam = record.get(ADVERTISER_TARGETING.RAM);
-                    if (minRam == null) minRam = 0;
-
                     AdgroupEntity.AdgroupEntityBuilder adgroupBuilder = AdgroupEntity.builder();
                     adgroupBuilder.id(record.get(ADVERTISER_ADGROUP.ID).toString());
                     adgroupBuilder.advertiserId(record.get(CHYM_USER_PROFILE.ID).toString());
@@ -129,9 +115,9 @@ public class AdgroupCache extends RefreshableDbCache<AdgroupEntity> {
                     adgroupBuilder.cmpTodayBurn(record.get(ADVERTISER_CAMPAIGN.TODAYBURN));
                     adgroupBuilder.pricingModel(PricingUtils.getPricing(record.get(ADVERTISER_ADGROUP.PRICING_ID)));
                     adgroupBuilder.appName(record.get(ADVERTISER_CAMPAIGN.APPNAME));
-                    adgroupBuilder.osId(osId);
-                    adgroupBuilder.minRam(minRam);
-                    adgroupBuilder.hmdId(hmdId);
+                    adgroupBuilder.osId(record.get(ADVERTISER_CAMPAIGN.OS_ID));
+                    adgroupBuilder.minRam(record.get(ADVERTISER_CAMPAIGN.RAM));
+                    adgroupBuilder.hmdId(record.get(ADVERTISER_CAMPAIGN.HMD_ID));
 
                     AdgroupEntity adgroup = adgroupBuilder.build();
                     entityBuilder.add(adgroup);
@@ -146,10 +132,16 @@ public class AdgroupCache extends RefreshableDbCache<AdgroupEntity> {
         }
     }
 
-    public Set<AdgroupEntity> getAdgroupsForHmd(int hmdId) {
-        return this.queryEntities(or(
-                equal(AdgroupEntity.HMD, hmdId),
-                equal(AdgroupEntity.HMD, -1)) // All targeted
+    public Set<AdgroupEntity> getAdgroupsForHmdAndOs(int hmdId, int OsId) {
+        return this.queryEntities(
+                and(
+                        or(
+                                equal(AdgroupEntity.HMD, hmdId),
+                                equal(AdgroupEntity.HMD, -1)),
+                        or(
+                                equal(AdgroupEntity.OS, OsId),
+                                equal(AdgroupEntity.HMD, -1))
+                ) // All targeted
         );
     }
 }

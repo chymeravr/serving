@@ -17,6 +17,7 @@ public class AdgroupEntity {
 
     public static final Attribute<AdgroupEntity, String> ID = attribute(AdgroupEntity::getId);
     public static final Attribute<AdgroupEntity, Integer> HMD = attribute(AdgroupEntity::getHmdId);
+    public static final Attribute<AdgroupEntity, Integer> OS = attribute(AdgroupEntity::getOsId);
 
     @NonNull
     private final String id;

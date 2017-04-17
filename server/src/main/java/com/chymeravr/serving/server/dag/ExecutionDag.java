@@ -56,8 +56,9 @@ public class ExecutionDag extends AbstractModule {
     @RequestScoped
     @Named(WorkerOutputNames.SELECTED_ADS)
     List<Impression> providesSelectedAds(AdSelector adSelector,
+                                         ValidatedRequest validatedRequest,
                                          @Named(WorkerOutputNames.SELECTED_ADGROUPS) List<AdgroupEntity> adgroups) {
-        return adSelector.getValidAds(adgroups);
+        return adSelector.getValidAds(adgroups, validatedRequest);
     }
 
 

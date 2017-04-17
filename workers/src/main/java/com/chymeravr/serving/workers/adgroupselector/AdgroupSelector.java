@@ -21,7 +21,17 @@ public class AdgroupSelector {
 
     public List<AdgroupEntity> getValidAdgroups(ValidatedRequest request) {
         int hmdId = request.getRequest().getHmdId();
-        ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmd(hmdId));
+        String osIdString = request.getRequest().getOsId();
+
+        int osId;
+        try {
+            osId = Integer.parseInt(osIdString);
+        } catch (Exception e) {
+            log.error("Invalid osId : {}", osIdString);
+            osId = -1;
+        }
+
+        ArrayList<AdgroupEntity> adgroupsForHmd = new ArrayList<>(adgroupCache.getAdgroupsForHmdAndOs(hmdId, osId));
         log.info("Candidate adgroups for the HMD: {}", adgroupsForHmd);
 
         List<AdgroupEntity> adgroupsWithBudget = adgroupsForHmd.stream().filter(x ->
