@@ -19,6 +19,7 @@ import static com.googlecode.cqengine.query.QueryFactory.*;
 @Data
 public class AdSelector {
     private final AdCache adCache;
+    private final double publisherShare = 0.4;
 
     public List<Impression> getValidAds(List<AdgroupEntity> selectedAdgroups,
                                         ValidatedRequest validatedRequest) {
@@ -41,7 +42,7 @@ public class AdSelector {
                         adgroupEntity,
                         ad,
                         adgroupEntity.getBid(),
-                        adgroupEntity.getBid() * 0.6);
+                        adgroupEntity.getBid() * publisherShare);
                 ads.add(impression);
             }
         }

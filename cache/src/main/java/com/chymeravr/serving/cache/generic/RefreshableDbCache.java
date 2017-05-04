@@ -64,7 +64,7 @@ public abstract class RefreshableDbCache<T> extends AbstractScheduledService {
         metricRegistry.register(getMetricName("lastAttemptedUpdate"), (Gauge<Long>) () -> this.lastAttemptedUpdateTime);
         metricRegistry.register(getMetricName("lastSuccessfulUpdate"), (Gauge<Long>) () -> this.lastSuccessfulUpdateTime);
 
-        // Update once
+        // Update once. Make this the responsibility of the caller to avoid bugs
         runOneIteration();
         this.startAsync();
     }
