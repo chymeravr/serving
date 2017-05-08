@@ -13,6 +13,7 @@ import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.hash.HashIndex;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.converters.IntegerArrayConverter;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 

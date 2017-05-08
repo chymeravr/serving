@@ -70,7 +70,7 @@ sudo docker build --build-arg JAR=/path/to/assembly/jar -t serving .
 ```
 * Run the image `serving` (Make sure already running containers for this image are stopped as it will throw an error while binding to the port)
 ```bash
-sudo docker run -t -e PORT=8080 --net=host serving
+sudo docker run -t -e PORT=8080 --net=host -v /var/log/serving:/var/log/serving serving
 
 ```
 
