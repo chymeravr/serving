@@ -13,6 +13,7 @@ import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.hash.HashIndex;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.converters.IntegerArrayConverter;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
@@ -88,7 +89,7 @@ public class AdgroupCache extends RefreshableDbCache<AdgroupEntity> {
                             .and(Tables.ADVERTISER_ADGROUP.ENDDATE.greaterThan(yesterdayDate))
                             .and(Tables.ADVERTISER_CAMPAIGN.STARTDATE.lessOrEqual(sqlDate))
                             .and(Tables.ADVERTISER_CAMPAIGN.ENDDATE.greaterThan(yesterdayDate))
-                            .and(Tables.CHYM_USER_PROFILE.ADVERTISING_FUNDS.greaterThan(Tables.CHYM_USER_PROFILE.ADVERTISING_BURN))
+                            .and(Tables.CHYM_USER_PROFILE.ADVERTISING_FUNDS.greaterThan(Tables.CHYM_USER_PROFILE.ADVERTISING_BURN.cast(Integer.class)))
                     )
                     .fetch();
 
