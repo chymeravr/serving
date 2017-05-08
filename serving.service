@@ -6,7 +6,7 @@ After=docker.service
 [Service]
 ExecStartPre=-/usr/bin/docker kill serving
 ExecStartPre=-/usr/bin/docker rm serving
-ExecStart=/usr/bin/docker run --net=host -v /var/log/:/var/log --name serving serving
+ExecStart=/usr/bin/docker run --net=host -v /var/log/serving:/var/log/serving --name serving serving
 ExecStop=/usr/bin/docker stop serving
 
 [Install]
