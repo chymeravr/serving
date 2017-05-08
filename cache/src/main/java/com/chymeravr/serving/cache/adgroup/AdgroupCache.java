@@ -89,7 +89,7 @@ public class AdgroupCache extends RefreshableDbCache<AdgroupEntity> {
                             .and(Tables.ADVERTISER_ADGROUP.ENDDATE.greaterThan(yesterdayDate))
                             .and(Tables.ADVERTISER_CAMPAIGN.STARTDATE.lessOrEqual(sqlDate))
                             .and(Tables.ADVERTISER_CAMPAIGN.ENDDATE.greaterThan(yesterdayDate))
-                            .and(Tables.CHYM_USER_PROFILE.ADVERTISING_FUNDS.greaterThan(Tables.CHYM_USER_PROFILE.ADVERTISING_BURN.cast(Integer.class)))
+                            .and(Tables.CHYM_USER_PROFILE.ADVERTISING_FUNDS.greaterThan(CHYM_USER_PROFILE.ADVERTISING_BURN.cast(Integer.class)))
                     )
                     .fetch();
 
